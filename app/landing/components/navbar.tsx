@@ -6,7 +6,7 @@ export default function Navbar() {
       <div className="flex items-center gap-3 bg-white/70 backdrop-blur-md px-3 py-2 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-black/5">
         {/* Logo/Home Link */}
         <div className="h-8 w-8 bg-zinc-900 rounded-full flex items-center justify-center text-white text-xs font-bold ml-1">
-          B
+          M
         </div>
 
         {/* Navigation Links */}
