@@ -1,6 +1,7 @@
 import { links } from "../helpers";
 import { ModeToggle } from "./toggleButton";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Navbar() {
   return (
@@ -37,9 +38,12 @@ export default function Navbar() {
           {/* Vertical Divider */}
           <div className="h-6 w-px mx-2 bg-foreground/20" />
 
-          <button className="cursor-pointer bg-foreground text-background px-5 py-2.5 rounded-full text-sm font-medium hover:bg-foreground/90 transition-colors">
+          <Link
+            href="/login"
+            className="cursor-pointer bg-foreground text-background px-5 py-2.5 rounded-full text-sm font-medium hover:bg-foreground/90 transition-colors"
+          >
             Get Started
-          </button>
+          </Link>
         </div>
       </div>
     </nav>
