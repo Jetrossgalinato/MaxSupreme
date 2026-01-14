@@ -8,6 +8,7 @@ import {
   MessageSquare,
   Zap,
 } from "lucide-react";
+import { TypographyH1 } from "@/components/ui/typography";
 
 export default function LandingPage() {
   return (
@@ -23,10 +24,10 @@ export default function LandingPage() {
                 <span className="flex h-2 w-2 rounded-full bg-blue-600 mr-2"></span>
                 Powered by Next-Gen Intelligence
               </div>
-              <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-primary leading-[1.1]">
+              <TypographyH1>
                 Scale Your Agency with{" "}
                 <span className="text-rose-500">Automated</span> Intelligence
-              </h1>
+              </TypographyH1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto lg:mx-0">
                 The ultimate platform for agencies and marketers. Manage leads,
                 automate follow-ups, and grow your revenue—all from one
