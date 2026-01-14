@@ -5,7 +5,7 @@ import Image from "next/image";
 export default function Navbar() {
   return (
     <nav className="fixed top-6 inset-x-0 z-50 flex justify-center px-6">
-      <div className="flex items-center justify-between w-full max-w-6xl bg-background/70 backdrop-blur-md p-2 rounded-full shadow-sm ring-1 ring-black/5">
+      <div className="flex items-center justify-between w-full max-w-7xl bg-background/70 backdrop-blur-md p-2 rounded-full shadow-sm ring-1 ring-black/5">
         {/* Left Side: Logo and Nav Links */}
         <div className="flex items-center gap-6">
           <Image
