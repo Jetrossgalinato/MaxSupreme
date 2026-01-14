@@ -8,7 +8,16 @@ import {
   MessageSquare,
   Zap,
 } from "lucide-react";
-import { TypographyH1 } from "@/components/ui/typography";
+import {
+  TypographyH1,
+  TypographyLead,
+  TypographyH2,
+  TypographyH3,
+  TypographyP,
+  TypographyMuted,
+  TypographyH4,
+  TypographySmall,
+} from "@/components/ui/typography";
 
 export default function LandingPage() {
   return (
@@ -21,18 +30,18 @@ export default function LandingPage() {
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
             <div className="flex-1 text-center lg:text-left space-y-8">
               <div className="inline-flex items-center rounded-full border px-3 py-1 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">
-                <span className="flex h-2 w-2 rounded-full bg-blue-600 mr-2"></span>
+                <TypographySmall className="flex h-2 w-2 rounded-full bg-blue-600 mr-2"></TypographySmall>
                 Powered by Next-Gen Intelligence
               </div>
               <TypographyH1>
                 Scale Your Agency with{" "}
                 <span className="text-rose-500">Automated</span> Intelligence
               </TypographyH1>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto lg:mx-0">
+              <TypographyLead className="max-w-2xl mx-auto lg:mx-0">
                 The ultimate platform for agencies and marketers. Manage leads,
                 automate follow-ups, and grow your revenue—all from one
                 centralized dashboard.
-              </p>
+              </TypographyLead>
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                 <button className="h-11 px-8 rounded-full bg-foreground text-background font-medium hover:bg-foreground/90 transition-all flex items-center gap-2">
                   Start Free Trial <ArrowRight className="w-4 h-4" />
@@ -79,14 +88,14 @@ export default function LandingPage() {
         {/* Features Grid */}
         <section className="px-6 max-w-7xl mx-auto mb-24">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">
+            <TypographyH2 className="text-3xl md:text-5xl font-bold mb-6">
               Everything you need to grow
-            </h2>
-            <p className="text-lg text-muted-foreground">
+            </TypographyH2>
+            <TypographyLead className="text-lg text-muted-foreground">
               Stop stitching together multiple tools. We integrate directly with
               industry-leading platforms to provide a seamless experience for
               lead management and automation.
-            </p>
+            </TypographyLead>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -135,23 +144,23 @@ export default function LandingPage() {
                 className="object-cover w-full h-full"
               />
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="bg-background/80 backdrop-blur px-4 py-2 rounded-lg text-sm font-medium border shadow-sm">
+                <TypographySmall className="bg-background/80 backdrop-blur px-4 py-2 rounded-lg text-sm font-medium border shadow-sm">
                   Automation Workflow UI
-                </span>
+                </TypographySmall>
               </div>
             </div>
             <div className="flex-1 space-y-6">
               <div className="inline-block p-2 rounded-lg bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
                 <Zap className="w-6 h-6" />
               </div>
-              <h3 className="text-3xl font-bold">
+              <TypographyH2 className="text-3xl font-bold border-none">
                 Automate Your Entire Business
-              </h3>
-              <p className="text-muted-foreground text-lg">
+              </TypographyH2>
+              <TypographyLead className="text-lg">
                 Save time and reduce errors by automating repetitive tasks. From
                 appointment reminders to birthday wishes, let our intelligent
                 workflows handle it all while you focus on strategy.
-              </p>
+              </TypographyLead>
               <ul className="space-y-3">
                 <li className="flex items-center gap-3">
                   <CheckCircle2 className="w-5 h-5 text-primary" />{" "}
@@ -188,14 +197,14 @@ export default function LandingPage() {
               <div className="inline-block p-2 rounded-lg bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300">
                 <BarChart3 className="w-6 h-6" />
               </div>
-              <h3 className="text-3xl font-bold">
+              <TypographyH2 className="text-3xl font-bold border-none">
                 Capture & Convert More Leads
-              </h3>
-              <p className="text-muted-foreground text-lg">
+              </TypographyH2>
+              <TypographyLead className="text-lg">
                 Create stunning landing pages, surveys, and forms that convert
                 visitors into leads. Our integration ensures every submission is
                 instantly synced and actionable.
-              </p>
+              </TypographyLead>
               <ul className="space-y-3">
                 <li className="flex items-center gap-3">
                   <CheckCircle2 className="w-5 h-5 text-primary" />{" "}
@@ -220,13 +229,13 @@ export default function LandingPage() {
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
 
-            <h2 className="text-3xl md:text-5xl font-bold mb-6 relative z-10">
+            <TypographyH2 className="text-3xl md:text-5xl font-bold mb-6 relative z-10 border-none">
               Ready to transform your agency?
-            </h2>
-            <p className="text-lg text-primary-foreground/80 mb-8 max-w-2xl mx-auto relative z-10">
+            </TypographyH2>
+            <TypographyP className="text-lg text-primary-foreground/80 mb-8 max-w-2xl mx-auto relative z-10">
               Join thousands of marketers who are saving time and closing more
               deals with our powerful platform.
-            </p>
+            </TypographyP>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
               <button className="h-12 px-8 rounded-full bg-background text-foreground font-bold hover:bg-background/90 transition-all">
                 Get Started Now
@@ -243,12 +252,12 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <div className="font-bold text-xl">MaxSupreme</div>
-            <p className="text-sm text-muted-foreground">
+            <TypographyMuted>
               Empowering agencies with next-gen automation and CRM tools.
-            </p>
+            </TypographyMuted>
           </div>
           <div>
-            <h4 className="font-semibold mb-4">Product</h4>
+            <TypographyH4 className="mb-4">Product</TypographyH4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
                 <a href="#" className="hover:text-foreground">
@@ -268,7 +277,7 @@ export default function LandingPage() {
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-4">Resources</h4>
+            <TypographyH4 className="mb-4">Resources</TypographyH4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
                 <a href="#" className="hover:text-foreground">
@@ -288,7 +297,7 @@ export default function LandingPage() {
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-4">Legal</h4>
+            <TypographyH4 className="mb-4">Legal</TypographyH4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
                 <a href="#" className="hover:text-foreground">
@@ -325,8 +334,8 @@ function FeatureCard({
       <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
         {icon}
       </div>
-      <h3 className="text-xl font-semibold mb-2">{title}</h3>
-      <p className="text-muted-foreground">{description}</p>
+      <TypographyH3 className="text-xl mb-2">{title}</TypographyH3>
+      <TypographyMuted>{description}</TypographyMuted>
     </div>
   );
 }
