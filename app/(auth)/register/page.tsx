@@ -9,13 +9,16 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { GoogleIcon } from "@/components/google-icon";
+import Navbar from "@/app/landing/components/navbar";
 
 export default function RegisterPage() {
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <Card className="mx-auto max-w-sm">
+      <Navbar />
+      <Card className="mx-auto w-full max-w-sm">
         <CardHeader>
-          <CardTitle className="text-xl">Sign Up</CardTitle>
+          <CardTitle className="text-2xl">Sign Up</CardTitle>
           <CardDescription>
             Enter your information to create an account
           </CardDescription>
@@ -48,7 +51,18 @@ export default function RegisterPage() {
             <Button type="submit" className="w-full">
               Create an account
             </Button>
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or
+                </span>
+              </div>
+            </div>
             <Button variant="outline" className="w-full">
+              <GoogleIcon className="mr-2 h-4 w-4" />
               Sign up with Google
             </Button>
           </div>
