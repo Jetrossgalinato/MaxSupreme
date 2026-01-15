@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GoogleIcon } from "@/components/google-icon";
 import Navbar from "@/app/landing/components/navbar";
-import { login } from "../actions";
+import { login, signInWithGoogle } from "../actions";
 
 const initialState = {
   error: "",
@@ -95,18 +95,20 @@ export default function LoginPage() {
                   </span>
                 </div>
               </div>
-              <Button variant="outline" className="w-full" type="button">
-                <GoogleIcon className="mr-2 h-4 w-4" />
-                Google
-              </Button>
-            </div>
-            <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{" "}
-              <Link href="/register" className="underline">
-                Sign up
-              </Link>
             </div>
           </form>
+          <form action={signInWithGoogle}>
+            <Button variant="outline" className="w-full mt-4" type="submit">
+              <GoogleIcon className="mr-2 h-4 w-4" />
+              Google
+            </Button>
+          </form>
+          <div className="mt-4 text-center text-sm">
+            Don&apos;t have an account?{" "}
+            <Link href="/register" className="underline">
+              Sign up
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </div>
