@@ -236,7 +236,16 @@ export default function LandingPage() {
       <footer className="border-t py-12 px-6 bg-muted/30">
         <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-8">
           <div className="space-y-4">
-            <div className="font-bold text-xl">MaxSupreme</div>
+            <div className="flex items-center gap-2">
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={40}
+                height={40}
+                className="flex-shrink-0"
+              />
+              <div className="font-bold text-xl">MaxSupreme</div>
+            </div>
             <TypographyMuted>
               Empowering agencies with next-gen automation and CRM tools.
             </TypographyMuted>
