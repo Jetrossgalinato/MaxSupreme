@@ -18,11 +18,17 @@ import {
   TypographyH4,
   TypographySmall,
 } from "@/components/ui/typography";
+import { createClient } from "@/utils/supabase/server";
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <div className="relative min-h-screen bg-background text-foreground selection:bg-primary/20">
-      <Navbar />
+      <Navbar user={user} />
 
       <main className="pt-60 pb-16">
         {/* Hero Section */}
@@ -72,7 +78,7 @@ export default function LandingPage() {
                     alt="Dashboard Preview"
                     width={800}
                     height={500}
-                    className="object-cover w-full h-full dark:brightness-75"
+                    className="object-cover w-full h-full dark:brightness-90"
                   />
                 </div>
               </div>
@@ -136,7 +142,7 @@ export default function LandingPage() {
                 alt="Automation Builder"
                 width={600}
                 height={400}
-                className="object-cover w-full h-full dark:brightness-75"
+                className="object-cover w-full h-full dark:brightness-90"
               />
             </div>
             <div className="flex-1 space-y-6">
@@ -175,7 +181,7 @@ export default function LandingPage() {
                 alt="Funnel Builder"
                 width={600}
                 height={400}
-                className="object-cover w-full h-full dark:brightness-75"
+                className="object-cover w-full h-full dark:brightness-90"
               />
             </div>
             <div className="flex-1 space-y-6">
