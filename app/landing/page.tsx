@@ -18,11 +18,17 @@ import {
   TypographyH4,
   TypographySmall,
 } from "@/components/ui/typography";
+import { createClient } from "@/utils/supabase/server";
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <div className="relative min-h-screen bg-background text-foreground selection:bg-primary/20">
-      <Navbar />
+      <Navbar user={user} />
 
       <main className="pt-60 pb-16">
         {/* Hero Section */}
