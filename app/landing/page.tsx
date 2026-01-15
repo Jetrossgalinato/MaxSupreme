@@ -24,7 +24,7 @@ export default function LandingPage() {
     <div className="relative min-h-screen bg-background text-foreground selection:bg-primary/20">
       <Navbar />
 
-      <main className="pt-50 pb-16">
+      <main className="pt-60 pb-16">
         {/* Hero Section */}
         <section className="px-6 max-w-7xl mx-auto mb-24 md:mb-32">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
@@ -81,7 +81,7 @@ export default function LandingPage() {
         </section>
 
         {/* Features Grid */}
-        <section className="px-6 max-w-7xl mx-auto mb-24">
+        <section className="px-6 max-w-7xl mx-auto mb-24 autoShow">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <TypographyH2 className="text-3xl md:text-5xl font-bold mb-6">
               Everything you need to grow
@@ -128,7 +128,7 @@ export default function LandingPage() {
         </section>
 
         {/* Feature Highlight Section (Alternating) */}
-        <section className="px-6 max-w-7xl mx-auto mb-24 space-y-24">
+        <section className="px-6 max-w-7xl mx-auto mb-24 space-y-24 autoShow">
           <div className="flex flex-col md:flex-row items-center gap-12">
             <div className="flex-1 relative aspect-square md:aspect-video w-full bg-muted rounded-2xl overflow-hidden border">
               <Image
@@ -209,7 +209,7 @@ export default function LandingPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="px-6 max-w-5xl mx-auto mb-16">
+        <section className="px-6 max-w-5xl mx-auto mb-16 autoShow">
           <div className="bg-primary text-primary-foreground rounded-3xl p-12 text-center relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
@@ -233,7 +233,7 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <footer className="border-t py-12 px-6 bg-muted/30">
+      <footer className="border-t py-12 px-6 bg-muted/30 autoShow">
         <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <div className="flex items-center gap-2">
