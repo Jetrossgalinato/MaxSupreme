@@ -72,7 +72,7 @@ export default function LandingPage() {
                     alt="Dashboard Preview"
                     width={800}
                     height={500}
-                    className="object-cover w-full h-full"
+                    className="object-cover w-full h-full dark:brightness-75"
                   />
                 </div>
               </div>
@@ -136,7 +136,7 @@ export default function LandingPage() {
                 alt="Automation Builder"
                 width={600}
                 height={400}
-                className="object-cover w-full h-full"
+                className="object-cover w-full h-full dark:brightness-75"
               />
             </div>
             <div className="flex-1 space-y-6">
@@ -175,7 +175,7 @@ export default function LandingPage() {
                 alt="Funnel Builder"
                 width={600}
                 height={400}
-                className="object-cover w-full h-full"
+                className="object-cover w-full h-full dark:brightness-75"
               />
             </div>
             <div className="flex-1 space-y-6">
