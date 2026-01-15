@@ -24,7 +24,7 @@ export default function LandingPage() {
     <div className="relative min-h-screen bg-background text-foreground selection:bg-primary/20">
       <Navbar />
 
-      <main className="pt-50 pb-16">
+      <main className="pt-60 pb-16">
         {/* Hero Section */}
         <section className="px-6 max-w-7xl mx-auto mb-24 md:mb-32">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
@@ -68,17 +68,12 @@ export default function LandingPage() {
                 {/* Placeholder for Hero Dashboard Image */}
                 <div className="aspect-[16/10] relative bg-muted/50 flex items-center justify-center text-muted-foreground">
                   <Image
-                    src="/hero-dashboard-placeholder.jpg"
+                    src="/hero-dashboard.png"
                     alt="Dashboard Preview"
                     width={800}
                     height={500}
-                    className="object-cover w-full h-full"
+                    className="object-cover w-full h-full dark:brightness-75"
                   />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="bg-background/80 backdrop-blur px-4 py-2 rounded-lg text-sm font-medium border shadow-sm">
-                      Dashboard Preview Image
-                    </span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -86,7 +81,7 @@ export default function LandingPage() {
         </section>
 
         {/* Features Grid */}
-        <section className="px-6 max-w-7xl mx-auto mb-24">
+        <section className="px-6 max-w-7xl mx-auto mb-24 autoShow">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <TypographyH2 className="text-3xl md:text-5xl font-bold mb-6">
               Everything you need to grow
@@ -133,21 +128,16 @@ export default function LandingPage() {
         </section>
 
         {/* Feature Highlight Section (Alternating) */}
-        <section className="px-6 max-w-7xl mx-auto mb-24 space-y-24">
+        <section className="px-6 max-w-7xl mx-auto mb-24 space-y-24 autoShow">
           <div className="flex flex-col md:flex-row items-center gap-12">
             <div className="flex-1 relative aspect-square md:aspect-video w-full bg-muted rounded-2xl overflow-hidden border">
               <Image
-                src="/feature-automation.jpg"
+                src="/Automation.png"
                 alt="Automation Builder"
                 width={600}
                 height={400}
-                className="object-cover w-full h-full"
+                className="object-cover w-full h-full dark:brightness-75"
               />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <TypographySmall className="bg-background/80 backdrop-blur px-4 py-2 rounded-lg text-sm font-medium border shadow-sm">
-                  Automation Workflow UI
-                </TypographySmall>
-              </div>
             </div>
             <div className="flex-1 space-y-6">
               <div className="inline-block p-2 rounded-lg bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
@@ -181,17 +171,12 @@ export default function LandingPage() {
           <div className="flex flex-col md:flex-row-reverse items-center gap-12">
             <div className="flex-1 relative aspect-square md:aspect-video w-full bg-muted rounded-2xl overflow-hidden border">
               <Image
-                src="/feature-funnels.jpg"
+                src="/template.png"
                 alt="Funnel Builder"
                 width={600}
                 height={400}
-                className="object-cover w-full h-full"
+                className="object-cover w-full h-full dark:brightness-75"
               />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="bg-background/80 backdrop-blur px-4 py-2 rounded-lg text-sm font-medium border shadow-sm">
-                  Funnel & Website Builder
-                </span>
-              </div>
             </div>
             <div className="flex-1 space-y-6">
               <div className="inline-block p-2 rounded-lg bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300">
@@ -224,7 +209,7 @@ export default function LandingPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="px-6 max-w-5xl mx-auto mb-16">
+        <section className="px-6 max-w-5xl mx-auto mb-16 autoShow">
           <div className="bg-primary text-primary-foreground rounded-3xl p-12 text-center relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
@@ -248,10 +233,19 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <footer className="border-t py-12 px-6 bg-muted/30">
+      <footer className="border-t py-12 px-6 bg-muted/30 autoShow">
         <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-8">
           <div className="space-y-4">
-            <div className="font-bold text-xl">MaxSupreme</div>
+            <div className="flex items-center gap-2">
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={40}
+                height={40}
+                className="flex-shrink-0"
+              />
+              <div className="font-bold text-xl">MaxSupreme</div>
+            </div>
             <TypographyMuted>
               Empowering agencies with next-gen automation and CRM tools.
             </TypographyMuted>
