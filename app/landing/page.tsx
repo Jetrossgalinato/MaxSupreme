@@ -68,17 +68,12 @@ export default function LandingPage() {
                 {/* Placeholder for Hero Dashboard Image */}
                 <div className="aspect-[16/10] relative bg-muted/50 flex items-center justify-center text-muted-foreground">
                   <Image
-                    src="/hero-dashboard-placeholder.jpg"
+                    src="/hero-dashboard.png"
                     alt="Dashboard Preview"
                     width={800}
                     height={500}
                     className="object-cover w-full h-full"
                   />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="bg-background/80 backdrop-blur px-4 py-2 rounded-lg text-sm font-medium border shadow-sm">
-                      Dashboard Preview Image
-                    </span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -137,17 +132,12 @@ export default function LandingPage() {
           <div className="flex flex-col md:flex-row items-center gap-12">
             <div className="flex-1 relative aspect-square md:aspect-video w-full bg-muted rounded-2xl overflow-hidden border">
               <Image
-                src="/feature-automation.jpg"
+                src="/Automation.png"
                 alt="Automation Builder"
                 width={600}
                 height={400}
                 className="object-cover w-full h-full"
               />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <TypographySmall className="bg-background/80 backdrop-blur px-4 py-2 rounded-lg text-sm font-medium border shadow-sm">
-                  Automation Workflow UI
-                </TypographySmall>
-              </div>
             </div>
             <div className="flex-1 space-y-6">
               <div className="inline-block p-2 rounded-lg bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
@@ -181,17 +171,12 @@ export default function LandingPage() {
           <div className="flex flex-col md:flex-row-reverse items-center gap-12">
             <div className="flex-1 relative aspect-square md:aspect-video w-full bg-muted rounded-2xl overflow-hidden border">
               <Image
-                src="/feature-funnels.jpg"
+                src="/template.png"
                 alt="Funnel Builder"
                 width={600}
                 height={400}
                 className="object-cover w-full h-full"
               />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="bg-background/80 backdrop-blur px-4 py-2 rounded-lg text-sm font-medium border shadow-sm">
-                  Funnel & Website Builder
-                </span>
-              </div>
             </div>
             <div className="flex-1 space-y-6">
               <div className="inline-block p-2 rounded-lg bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300">
