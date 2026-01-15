@@ -1,9 +1,22 @@
+"use client";
+
 import { links } from "../helpers";
 import { ModeToggle } from "./toggleButton";
 import Image from "next/image";
 import Link from "next/link";
 import { User } from "@supabase/supabase-js";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { LogOut, Settings, User as UserIcon } from "lucide-react";
+import { signout } from "@/app/(auth)/actions";
 
 export default function Navbar({ user }: { user?: User | null }) {
   const getInitials = (name: string) => {
@@ -50,25 +63,48 @@ export default function Navbar({ user }: { user?: User | null }) {
           <div className="h-6 w-px mx-2 bg-foreground/20" />
 
           {user ? (
-            <div className="flex items-center gap-2 pr-2">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={user.user_metadata?.avatar_url} />
-                <AvatarFallback>
-                  {user.user_metadata?.first_name
-                    ? getInitials(
-                        user.user_metadata.first_name +
-                          " " +
-                          (user.user_metadata.last_name || "")
-                      )
-                    : user.email?.slice(0, 2).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <span className="text-sm font-medium">
-                {user.user_metadata?.full_name ||
-                  user.user_metadata?.first_name ||
-                  user.email?.split("@")[0]}
-              </span>
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-2 pr-2 outline-none">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user.user_metadata?.avatar_url} />
+                    <AvatarFallback>
+                      {user.user_metadata?.first_name
+                        ? getInitials(
+                            user.user_metadata.first_name +
+                              " " +
+                              (user.user_metadata.last_name || "")
+                          )
+                        : user.email?.slice(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm font-medium">
+                    {user.user_metadata?.full_name ||
+                      user.user_metadata?.first_name ||
+                      user.email?.split("@")[0]}
+                  </span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem>
+                    <UserIcon className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => signout()}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <Link
               href="/login"
