@@ -1,0 +1,82 @@
+"use client";
+
+import { ModeToggle } from "@/app/landing/components/toggleButton";
+import { User } from "@supabase/supabase-js";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { LogOut, Settings, User as UserIcon } from "lucide-react";
+import { signout } from "@/app/(auth)/actions";
+
+export default function DashboardHeader({ user }: { user?: User | null }) {
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  return (
+    <header className="sticky top-0 z-30 flex h-16 items-center border-b bg-background px-6 shadow-sm">
+      <div className="flex flex-1 items-center justify-end gap-4">
+        <ModeToggle />
+
+        <div className="h-6 w-px mx-2 bg-foreground/20" />
+
+        {user && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-2 outline-none">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={user.user_metadata?.avatar_url} />
+                  <AvatarFallback>
+                    {user.user_metadata?.first_name
+                      ? getInitials(
+                          user.user_metadata.first_name +
+                            " " +
+                            (user.user_metadata.last_name || "")
+                        )
+                      : user.email?.slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="hidden md:flex text-sm font-medium">
+                  {user.user_metadata?.full_name ||
+                    user.user_metadata?.first_name ||
+                    user.email?.split("@")[0]}
+                </span>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem>
+                  <UserIcon className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => signout()}>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+      </div>
+    </header>
+  );
+}
