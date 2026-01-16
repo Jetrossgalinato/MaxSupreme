@@ -68,14 +68,14 @@ export function RecentActivity() {
           type="monotone"
           strokeWidth={2}
           dataKey="average"
-          stroke="var(--primary)"
-          strokeOpacity={0.25}
+          stroke="var(--chart-2)"
+          strokeOpacity={1}
         />
         <Line
           type="monotone"
           dataKey="today"
           strokeWidth={2}
-          stroke="var(--primary)"
+          stroke="var(--chart-1)"
         />
       </LineChart>
     </ResponsiveContainer>
