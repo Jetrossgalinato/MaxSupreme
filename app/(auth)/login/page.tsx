@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,20 +14,73 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { GoogleIcon } from "@/components/google-icon";
 import Navbar from "@/app/landing/components/navbar";
-import { login, signInWithGoogle } from "../actions";
+import { login } from "../actions";
+import Alert from "@/components/custom-alert";
 
 const initialState = {
   error: "",
+  timestamp: 0,
 };
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const [state, formAction, isPending] = useActionState(login, initialState);
   const [showPassword, setShowPassword] = useState(false);
+  const searchParams = useSearchParams();
+
+  const [alert, setAlert] = useState<{
+    type: "success" | "error" | "warning" | "info";
+    title?: string;
+    message: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const message = searchParams.get("message");
+    if (message) {
+      const timer = setTimeout(() => {
+        setAlert({
+          type: "success",
+          title: "Success",
+          message: message,
+        });
+        // Optionally clean up the URL parameter
+        window.history.replaceState({}, "", "/login");
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (state.error) {
+      const timer = setTimeout(() => {
+        setAlert({
+          type: "error",
+          title: "Login Failed",
+          message: state.error,
+        });
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [state.error, state.timestamp]);
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
+      {alert && (
+        <Alert
+          type={alert.type}
+          title={alert.title}
+          message={alert.message}
+          onClose={() => setAlert(null)}
+        />
+      )}
       <Navbar user={null} />
       <Card className="mx-auto w-full max-w-sm">
         <CardHeader>
@@ -79,29 +133,10 @@ export default function LoginPage() {
                   </button>
                 </div>
               </div>
-              {state?.error && (
-                <p className="text-sm text-red-500">{state.error}</p>
-              )}
               <Button className="w-full" disabled={isPending}>
                 {isPending ? "Logging in..." : "Login"}
               </Button>
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">
-                    Or continue with
-                  </span>
-                </div>
-              </div>
             </div>
-          </form>
-          <form action={signInWithGoogle}>
-            <Button variant="outline" className="w-full mt-4" type="submit">
-              <GoogleIcon className="mr-2 h-4 w-4" />
-              Google
-            </Button>
           </form>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
