@@ -14,9 +14,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { GoogleIcon } from "@/components/google-icon";
 import Navbar from "@/app/landing/components/navbar";
-import { login, signInWithGoogle } from "../actions";
+import { login } from "../actions";
 import Alert from "@/components/custom-alert";
 
 const initialState = {
@@ -136,23 +135,7 @@ function LoginForm() {
               <Button className="w-full" disabled={isPending}>
                 {isPending ? "Logging in..." : "Login"}
               </Button>
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">
-                    Or continue with
-                  </span>
-                </div>
-              </div>
             </div>
-          </form>
-          <form action={signInWithGoogle}>
-            <Button variant="outline" className="w-full mt-4" type="submit">
-              <GoogleIcon className="mr-2 h-4 w-4" />
-              Google
-            </Button>
           </form>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}

@@ -56,28 +56,6 @@ export async function signup(prevState: { error: string }, formData: FormData) {
   redirect("/");
 }
 
-export async function signInWithGoogle() {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: `${
-        process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
-      }/auth/callback`,
-    },
-  });
-
-  if (error) {
-    console.error(error);
-    // You might want to redirect to an error page here
-    redirect("/auth/error?message=" + encodeURIComponent(error.message));
-  }
-
-  if (data.url) {
-    redirect(data.url);
-  }
-}
-
 export async function signout() {
   const supabase = await createClient();
   await supabase.auth.signOut();
