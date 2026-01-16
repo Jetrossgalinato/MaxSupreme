@@ -21,7 +21,7 @@ export async function login(prevState: { error: string }, formData: FormData) {
   }
 
   revalidatePath("/", "layout");
-  redirect("/");
+  redirect("/dashboard");
 }
 
 export async function signup(prevState: { error: string }, formData: FormData) {
