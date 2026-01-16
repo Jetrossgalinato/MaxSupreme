@@ -5,7 +5,10 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/utils/supabase/server";
 
-export async function login(prevState: { error: string }, formData: FormData) {
+export async function login(
+  prevState: { error: string; timestamp?: number },
+  formData: FormData
+) {
   const supabase = await createClient();
 
   const email = formData.get("email") as string;
@@ -17,14 +20,17 @@ export async function login(prevState: { error: string }, formData: FormData) {
   });
 
   if (error) {
-    return { error: error.message };
+    return { error: error.message, timestamp: Date.now() };
   }
 
   revalidatePath("/", "layout");
   redirect("/dashboard");
 }
 
-export async function signup(prevState: { error: string }, formData: FormData) {
+export async function signup(
+  prevState: { error: string; timestamp?: number },
+  formData: FormData
+) {
   const supabase = await createClient();
 
   const email = formData.get("email") as string;
@@ -34,7 +40,7 @@ export async function signup(prevState: { error: string }, formData: FormData) {
   const lastName = formData.get("last-name") as string;
 
   if (password !== confirmPassword) {
-    return { error: "Passwords do not match" };
+    return { error: "Passwords do not match", timestamp: Date.now() };
   }
 
   const { error } = await supabase.auth.signUp({
@@ -49,11 +55,13 @@ export async function signup(prevState: { error: string }, formData: FormData) {
   });
 
   if (error) {
-    return { error: error.message };
+    return { error: error.message, timestamp: Date.now() };
   }
 
   revalidatePath("/", "layout");
-  redirect("/");
+  redirect(
+    "/login?message=Account created successfully. Please check your email if confirmation is required."
+  );
 }
 
 export async function signout() {

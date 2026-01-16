@@ -20,6 +20,7 @@ import Alert from "@/components/custom-alert";
 
 const initialState = {
   error: "",
+  timestamp: 0,
 };
 
 export default function LoginPage() {
@@ -68,7 +69,7 @@ function LoginForm() {
       }, 0);
       return () => clearTimeout(timer);
     }
-  }, [state.error]);
+  }, [state.error, state.timestamp]);
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
