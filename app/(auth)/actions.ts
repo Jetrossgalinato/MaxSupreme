@@ -7,14 +7,14 @@ import { createClient } from "@/utils/supabase/server";
 
 export async function login(
   prevState: { error: string; timestamp?: number },
-  formData: FormData
+  formData: FormData,
 ) {
   const supabase = await createClient();
 
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
@@ -24,12 +24,18 @@ export async function login(
   }
 
   revalidatePath("/", "layout");
-  redirect("/dashboard");
+
+  const role = data.user?.user_metadata?.role;
+  if (role === "admin") {
+    redirect("/dashboard?message=Logged+in+successfully");
+  } else {
+    redirect("/?message=Logged+in+successfully");
+  }
 }
 
 export async function signup(
   prevState: { error: string; timestamp?: number },
-  formData: FormData
+  formData: FormData,
 ) {
   const supabase = await createClient();
 
@@ -50,6 +56,7 @@ export async function signup(
       data: {
         first_name: firstName,
         last_name: lastName,
+        role: "member", // Default role
       },
     },
   });
@@ -59,9 +66,7 @@ export async function signup(
   }
 
   revalidatePath("/", "layout");
-  redirect(
-    "/login?message=Account created successfully. Please check your email if confirmation is required."
-  );
+  redirect("/login?message=Account created successfully");
 }
 
 export async function signout() {

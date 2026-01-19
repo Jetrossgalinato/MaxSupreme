@@ -10,7 +10,7 @@ export function TypographyH1({
     <h1
       className={cn(
         "scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl",
-        className
+        className,
       )}
       {...props}
     >
@@ -28,7 +28,7 @@ export function TypographyH2({
     <h2
       className={cn(
         "scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0",
-        className
+        className,
       )}
       {...props}
     >
@@ -46,7 +46,7 @@ export function TypographyH3({
     <h3
       className={cn(
         "scroll-m-20 text-2xl font-semibold tracking-tight",
-        className
+        className,
       )}
       {...props}
     >
@@ -64,7 +64,7 @@ export function TypographyH4({
     <h4
       className={cn(
         "scroll-m-20 text-xl font-semibold tracking-tight",
-        className
+        className,
       )}
       {...props}
     >
@@ -175,6 +175,18 @@ export function TypographyMuted({
 }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
     <p className={cn("text-sm text-muted-foreground", className)} {...props}>
+      {children}
+    </p>
+  );
+}
+
+export function HelperText({
+  children,
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLParagraphElement>) {
+  return (
+    <p className={cn("text-xs text-muted-foreground", className)} {...props}>
       {children}
     </p>
   );

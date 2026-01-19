@@ -4,7 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, LineChart, Settings } from "lucide-react";
+import {
+  Link as LinkIcon,
+  LayoutDashboard,
+  Users,
+  LineChart,
+  Settings,
+  UserCog,
+} from "lucide-react";
 import Image from "next/image";
 
 type SidebarProps = React.HTMLAttributes<HTMLDivElement>;
@@ -18,6 +25,12 @@ export function Sidebar({ className }: SidebarProps) {
       icon: LayoutDashboard,
       href: "/dashboard",
       active: pathname === "/dashboard",
+    },
+    {
+      label: "Users",
+      icon: UserCog,
+      href: "/dashboard/users",
+      active: pathname === "/dashboard/users",
     },
     {
       label: "Staff",

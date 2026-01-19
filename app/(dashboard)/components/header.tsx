@@ -43,7 +43,7 @@ export default function DashboardHeader({ user }: { user?: User | null }) {
                       ? getInitials(
                           user.user_metadata.first_name +
                             " " +
-                            (user.user_metadata.last_name || "")
+                            (user.user_metadata.last_name || ""),
                         )
                       : user.email?.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
@@ -56,7 +56,25 @@ export default function DashboardHeader({ user }: { user?: User | null }) {
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">
+                    {user.user_metadata?.full_name ||
+                      user.user_metadata?.first_name +
+                        " " +
+                        (user.user_metadata?.last_name || "") ||
+                      "My Account"}
+                  </p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {user.email}
+                  </p>
+                  <div className="flex items-center pt-1">
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary capitalize">
+                      {user.user_metadata?.role || "member"}
+                    </span>
+                  </div>
+                </div>
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuItem>
