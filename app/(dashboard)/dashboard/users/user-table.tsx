@@ -3,21 +3,14 @@
 import { useState } from "react";
 import { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { MoreHorizontal, Pencil, Trash2, X } from "lucide-react";
+import { Pencil, Trash2, X } from "lucide-react";
 import { deleteUser, updateUser } from "./actions";
 import { HelperText } from "@/components/ui/typography";
 import { useRouter } from "next/navigation";
 import { UserRole } from "@/types/roles";
+import Alert from "@/components/custom-alert";
 
 interface UserTableProps {
   users: User[];
@@ -27,6 +20,11 @@ export function UserTable({ users }: UserTableProps) {
   const router = useRouter();
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [alert, setAlert] = useState<{
+    type: "success" | "error" | "warning" | "info";
+    title?: string;
+    message: string;
+  } | null>(null);
 
   // Form State
   const [firstName, setFirstName] = useState("");
@@ -55,8 +53,17 @@ export function UserTable({ users }: UserTableProps) {
     if (result.success) {
       setEditingUser(null);
       router.refresh();
+      setAlert({
+        type: "success",
+        title: "Success",
+        message: "User updated successfully.",
+      });
     } else {
-      alert("Failed to update user: " + result.error);
+      setAlert({
+        type: "error",
+        title: "Error",
+        message: "Failed to update user: " + result.error,
+      });
     }
   };
 
@@ -72,13 +79,30 @@ export function UserTable({ users }: UserTableProps) {
     const result = await deleteUser(userId);
     if (result.success) {
       router.refresh();
+      setAlert({
+        type: "success",
+        title: "Success",
+        message: "User deleted successfully.",
+      });
     } else {
-      alert("Failed to delete user: " + result.error);
+      setAlert({
+        type: "error",
+        title: "Error",
+        message: "Failed to delete user: " + result.error,
+      });
     }
   };
 
   return (
     <div className="rounded-md border">
+      {alert && (
+        <Alert
+          type={alert.type}
+          title={alert.title}
+          message={alert.message}
+          onClose={() => setAlert(null)}
+        />
+      )}
       <div className="relative w-full overflow-auto">
         <table className="w-full caption-bottom text-sm">
           <thead className="[&_tr]:border-b">
