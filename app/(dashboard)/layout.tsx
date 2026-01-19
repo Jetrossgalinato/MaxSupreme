@@ -1,7 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { Sidebar } from "./components/sidebar";
 import DashboardHeader from "./components/header";
-import GlobalAlertListener from "@/components/global-alert-listener"; // Add this
 
 export default async function DashboardLayout({
   children,
@@ -15,7 +14,6 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      <GlobalAlertListener /> {/* Add this */}
       <div className="hidden border-r bg-muted/40 md:block md:w-64 md:shrink-0 lg:w-72">
         <Sidebar className="h-full" />
       </div>

@@ -16,17 +16,17 @@ export async function updateSession(request: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) =>
-            request.cookies.set(name, value)
+            request.cookies.set(name, value),
           );
           supabaseResponse = NextResponse.next({
             request,
           });
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
+            supabaseResponse.cookies.set(name, value, options),
           );
         },
       },
-    }
+    },
   );
 
   // IMPORTANT: Avoid writing any logic between createServerClient and
@@ -49,6 +49,18 @@ export async function updateSession(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
+  }
+
+  // Auth Guard: Only admins can access dashboard pages
+  if (user && request.nextUrl.pathname.startsWith("/dashboard")) {
+    const role = user.user_metadata?.role;
+    if (role !== "admin") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/";
+      url.searchParams.set("message", "Unauthorized access. Admins only.");
+      url.searchParams.set("type", "error");
+      return NextResponse.redirect(url);
+    }
   }
 
   return supabaseResponse;

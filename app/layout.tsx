@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import GlobalAlertListener from "@/components/global-alert-listener";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -27,6 +28,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <GlobalAlertListener />
           {children}
         </ThemeProvider>
       </body>
