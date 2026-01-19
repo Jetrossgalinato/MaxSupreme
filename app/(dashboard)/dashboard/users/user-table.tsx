@@ -12,6 +12,8 @@ import { useRouter } from "next/navigation";
 import { UserRole } from "@/types/roles";
 import Alert from "@/components/custom-alert";
 
+import { DeleteConfirmationModal } from "../../components/delete-confirmation-modal";
+
 interface UserTableProps {
   users: User[];
 }
@@ -19,6 +21,7 @@ interface UserTableProps {
 export function UserTable({ users }: UserTableProps) {
   const router = useRouter();
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [deletingUser, setDeletingUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState<{
     type: "success" | "error" | "warning" | "info";
@@ -67,17 +70,19 @@ export function UserTable({ users }: UserTableProps) {
     }
   };
 
-  const handleDelete = async (userId: string) => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this user? This action cannot be undone.",
-      )
-    ) {
-      return;
-    }
+  const handleDeleteClick = (user: User) => {
+    setDeletingUser(user);
+  };
 
-    const result = await deleteUser(userId);
+  const confirmDelete = async () => {
+    if (!deletingUser) return;
+
+    setIsLoading(true);
+    const result = await deleteUser(deletingUser.id);
+    setIsLoading(false);
+
     if (result.success) {
+      setDeletingUser(null);
       router.refresh();
       setAlert({
         type: "success",
@@ -90,6 +95,8 @@ export function UserTable({ users }: UserTableProps) {
         title: "Error",
         message: "Failed to delete user: " + result.error,
       });
+      // Optionally keep the modal open or close it
+      setDeletingUser(null);
     }
   };
 
@@ -175,7 +182,7 @@ export function UserTable({ users }: UserTableProps) {
                         variant="ghost"
                         size="sm"
                         className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                        onClick={() => handleDelete(user.id)}
+                        onClick={() => handleDeleteClick(user)}
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
                         Delete
@@ -258,6 +265,15 @@ export function UserTable({ users }: UserTableProps) {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        user={deletingUser}
+        isOpen={!!deletingUser}
+        onClose={() => setDeletingUser(null)}
+        onConfirm={confirmDelete}
+        isLoading={isLoading}
+      />
     </div>
   );
 }
