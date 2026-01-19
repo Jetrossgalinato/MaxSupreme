@@ -50,6 +50,7 @@ export async function signup(
       data: {
         first_name: firstName,
         last_name: lastName,
+        role: "member", // Default role
       },
     },
   });
