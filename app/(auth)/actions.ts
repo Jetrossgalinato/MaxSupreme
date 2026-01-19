@@ -60,9 +60,7 @@ export async function signup(
   }
 
   revalidatePath("/", "layout");
-  redirect(
-    "/login?message=Account created successfully. Please check your email if confirmation is required.",
-  );
+  redirect("/login?message=Account created successfully");
 }
 
 export async function signout() {
