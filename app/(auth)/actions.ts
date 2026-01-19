@@ -7,7 +7,7 @@ import { createClient } from "@/utils/supabase/server";
 
 export async function login(
   prevState: { error: string; timestamp?: number },
-  formData: FormData
+  formData: FormData,
 ) {
   const supabase = await createClient();
 
@@ -24,12 +24,12 @@ export async function login(
   }
 
   revalidatePath("/", "layout");
-  redirect("/dashboard");
+  redirect("/dashboard?message=Logged+in+successfully");
 }
 
 export async function signup(
   prevState: { error: string; timestamp?: number },
-  formData: FormData
+  formData: FormData,
 ) {
   const supabase = await createClient();
 
@@ -60,7 +60,7 @@ export async function signup(
 
   revalidatePath("/", "layout");
   redirect(
-    "/login?message=Account created successfully. Please check your email if confirmation is required."
+    "/login?message=Account created successfully. Please check your email if confirmation is required.",
   );
 }
 
