@@ -7,9 +7,11 @@ import {
   Users,
   MessageSquare,
   Zap,
+  FileUp,
 } from "lucide-react";
 import { TypographyH3, TypographyMuted } from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
+import UploadModal from "./upload-modal";
 
 const features = [
   {
@@ -48,11 +50,18 @@ const features = [
     description:
       "Construct high-converting landing pages and funnels with our intuitive drag-and-drop editor.",
   },
+  {
+    icon: <FileUp className="w-6 h-6 text-cyan-600" />,
+    title: "Secure Document Portal",
+    description:
+      "Allow clients to securely upload and share sensitive documents directly through your platform with end-to-end encryption.",
+  },
 ];
 
 export default function FeaturesCarousel() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   const scrollTo = (index: number) => {
     const container = scrollRef.current;
@@ -108,23 +117,29 @@ export default function FeaturesCarousel() {
         {features.map((feature, index) => (
           <div
             key={index}
-            // 1. Add the onClick handler to scroll to this index
             onClick={() => scrollTo(index)}
             className={cn(
               "flex-shrink-0 w-full snap-center transition-all duration-500 ease-in-out px-4",
-              // 2. Add 'cursor-pointer' only if it's not the active card
               activeIndex !== index
                 ? "blur-[1px] opacity-60 scale-95 cursor-pointer"
                 : "blur-0 opacity-100 scale-100",
             )}
           >
-            {/* 3. Wrap inner content with pointer-events-none to ensure the outer click triggers */}
-            <div className="max-w-4xl mx-auto h-full pointer-events-none">
-              <FeatureCard {...feature} />
+            <div className="max-w-4xl mx-auto h-full">
+              <FeatureCard
+                {...feature}
+                isActive={activeIndex === index}
+                onUploadTrigger={() => setIsUploadModalOpen(true)}
+              />
             </div>
           </div>
         ))}
       </div>
+
+      <UploadModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+      />
 
       {/* Custom Selector / Indicators */}
       <div className="flex items-center justify-center gap-2 mt-4">
@@ -150,10 +165,14 @@ function FeatureCard({
   icon,
   title,
   description,
+  isActive,
+  onUploadTrigger,
 }: {
   icon: React.ReactNode;
   title: string;
   description: string;
+  isActive?: boolean;
+  onUploadTrigger?: () => void;
 }) {
   return (
     <div className="flex flex-col items-center justify-center text-center h-full min-h-[400px] p-8 md:p-12 rounded-2xl border bg-card hover:shadow-lg transition-all duration-300 group">
@@ -170,9 +189,27 @@ function FeatureCard({
         )}
       </div>
       <TypographyH3 className="text-2xl mb-4">{title}</TypographyH3>
-      <TypographyMuted className="text-lg max-w-2xl">
+      <TypographyMuted className="text-lg max-w-2xl mb-6">
         {description}
       </TypographyMuted>
+
+      {/* Optional: Add a button for the Document Portal */}
+      {title === "Secure Document Portal" && (
+        <button
+          className={cn(
+            "px-6 py-2 bg-primary text-primary-foreground rounded-lg transition-opacity",
+            isActive
+              ? "opacity-100 pointer-events-auto"
+              : "opacity-0 pointer-events-none",
+          )}
+          onClick={(e) => {
+            e.stopPropagation(); // Prevents triggering the carousel scroll
+            onUploadTrigger?.();
+          }}
+        >
+          Upload Document
+        </button>
+      )}
     </div>
   );
 }

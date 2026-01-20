@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,7 @@ import { HelperText } from "@/components/ui/typography";
 import { useRouter } from "next/navigation";
 import { UserRole } from "@/types/roles";
 import Alert from "@/components/custom-alert";
+import { createClient } from "@/utils/supabase/client";
 
 import { DeleteConfirmationModal } from "../../components/delete-confirmation-modal";
 
@@ -29,16 +30,93 @@ export function UserTable({ users }: UserTableProps) {
     message: string;
   } | null>(null);
 
+  const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const supabase = createClient();
+    const channel = supabase.channel("staff-room");
+
+    channel
+      .on("presence", { event: "sync" }, () => {
+        const newState = channel.presenceState();
+        const onlineIds = new Set<string>();
+
+        // Iterate over the state to find online user IDs
+        // presenceState returns { [key: string]: PresencePayload[] }
+        Object.values(newState).forEach((presences) => {
+          presences.forEach((presence) => {
+            const p = presence as unknown as { id: string };
+            if (p.id) {
+              onlineIds.add(p.id);
+            }
+          });
+        });
+
+        setOnlineUsers(onlineIds);
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const getDisplayHours = (user: User) => {
+    let total = parseFloat(user.user_metadata?.total_hours || "0");
+
+    // If user is online, add the time since their last activity or login
+    if (onlineUsers.has(user.id)) {
+      // Determine the anchor time: either last_active_timestamp or last_sign_in_at
+      const lastActive = user.user_metadata?.last_active_timestamp
+        ? new Date(user.user_metadata.last_active_timestamp).getTime()
+        : 0;
+      const lastSignIn = user.last_sign_in_at
+        ? new Date(user.last_sign_in_at).getTime()
+        : 0;
+
+      // Use the most recent timestamp as the start of the current "unaccounted" segment
+      let anchorTime = lastActive;
+      if (lastSignIn > lastActive) {
+        anchorTime = lastSignIn;
+      }
+
+      // If we have a valid anchor, calculate the live diff
+      if (anchorTime > 0) {
+        const diffMs = currentTime.getTime() - anchorTime;
+        if (diffMs > 0) {
+          const currentSessionHours = diffMs / (1000 * 60 * 60);
+          total += currentSessionHours;
+        }
+      }
+    }
+
+    const totalSeconds = Math.floor(total * 3600);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    const pad = (num: number) => num.toString().padStart(2, "0");
+    return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+  };
+
   // Form State
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [role, setRole] = useState<UserRole>("member");
+  const [totalHours, setTotalHours] = useState<number>(0);
 
   const handleEditClick = (user: User) => {
     setEditingUser(user);
     setFirstName(user.user_metadata?.first_name || "");
     setLastName(user.user_metadata?.last_name || "");
     setRole(user.user_metadata?.role || "member");
+    setTotalHours(Number(user.user_metadata?.total_hours) || 0);
   };
 
   const handleUpdate = async (e: React.FormEvent) => {
@@ -50,6 +128,7 @@ export function UserTable({ users }: UserTableProps) {
       firstName,
       lastName,
       role,
+      totalHours,
     });
     setIsLoading(false);
 
@@ -114,7 +193,7 @@ export function UserTable({ users }: UserTableProps) {
         <table className="w-full caption-bottom text-sm">
           <thead className="[&_tr]:border-b">
             <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-[250px]">
                 Name
               </th>
               <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
@@ -122,6 +201,9 @@ export function UserTable({ users }: UserTableProps) {
               </th>
               <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
                 Role
+              </th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                Total Hours
               </th>
               <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
                 Created At
@@ -134,7 +216,7 @@ export function UserTable({ users }: UserTableProps) {
           <tbody className="[&_tr:last-child]:border-0">
             {users.length === 0 ? (
               <tr>
-                <td colSpan={5} className="p-4 text-center">
+                <td colSpan={6} className="p-4 text-center">
                   No users found.
                 </td>
               </tr>
@@ -164,6 +246,18 @@ export function UserTable({ users }: UserTableProps) {
                     >
                       {user.user_metadata?.role || "member"}
                     </span>
+                  </td>
+                  <td
+                    className="p-4 align-middle font-mono"
+                    suppressHydrationWarning
+                  >
+                    {getDisplayHours(user)}
+                    {onlineUsers.has(user.id) && (
+                      <span
+                        className="ml-2 inline-block h-2 w-2 rounded-full bg-green-500 animate-pulse align-middle"
+                        title="Tracking time active"
+                      />
+                    )}
                   </td>
                   <td className="p-4 align-middle">
                     {new Date(user.created_at).toLocaleDateString()}
@@ -229,6 +323,21 @@ export function UserTable({ users }: UserTableProps) {
                     placeholder="Last Name"
                   />
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="total-hours">Total Hours</Label>
+                <Input
+                  id="total-hours"
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  value={totalHours}
+                  onChange={(e) =>
+                    setTotalHours(parseFloat(e.target.value) || 0)
+                  }
+                  placeholder="0"
+                />
               </div>
 
               <div className="space-y-2">

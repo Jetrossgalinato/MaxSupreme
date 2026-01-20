@@ -1,4 +1,7 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { AlertCircle, CheckCircle, XCircle, Info, X } from "lucide-react";
 
 interface AlertProps {
@@ -20,6 +23,12 @@ const Alert: React.FC<AlertProps> = ({
 }) => {
   const [isExiting, setIsExiting] = useState(false);
   const [progress, setProgress] = useState(100);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (autoClose) {
@@ -113,9 +122,11 @@ const Alert: React.FC<AlertProps> = ({
 
   const colors = getColors();
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div
-      className={`fixed top-20 right-4 z-50 max-w-md w-full sm:w-96 transition-all duration-300 ease-out ${
+      className={`fixed top-4 right-4 z-[99999] max-w-md w-full sm:w-96 transition-all duration-300 ease-out ${
         isExiting
           ? "translate-x-[120%] opacity-0"
           : "translate-x-0 opacity-100 animate-in slide-in-from-right-full"
@@ -154,7 +165,8 @@ const Alert: React.FC<AlertProps> = ({
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 

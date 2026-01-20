@@ -26,7 +26,12 @@ export async function getUsers() {
 
 export async function updateUser(
   userId: string,
-  data: { firstName?: string; lastName?: string; role?: UserRole },
+  data: {
+    firstName?: string;
+    lastName?: string;
+    role?: UserRole;
+    totalHours?: number;
+  },
 ) {
   try {
     const supabase = createAdminClient();
@@ -36,10 +41,12 @@ export async function updateUser(
       last_name?: string;
       full_name?: string;
       role?: UserRole;
+      total_hours?: number;
     } = {};
 
     if (data.firstName) updates.first_name = data.firstName;
     if (data.lastName) updates.last_name = data.lastName;
+    if (data.totalHours !== undefined) updates.total_hours = data.totalHours;
 
     // Combine names for full path if both present (optional logic depending on how full_name is used)
     if (data.firstName && data.lastName) {

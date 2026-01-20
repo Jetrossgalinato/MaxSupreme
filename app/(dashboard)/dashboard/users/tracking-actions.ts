@@ -1,0 +1,78 @@
+"use server";
+
+import { createClient } from "@/utils/supabase/server";
+
+export async function updateUserActivity() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return { success: false, error: "Unauthorized" };
+  }
+
+  try {
+    const metadata = user.user_metadata || {};
+    const lastSignIn = user.last_sign_in_at
+      ? new Date(user.last_sign_in_at).getTime()
+      : 0;
+
+    // Get last active timestamp from metadata, default to 0
+    const lastActive = metadata.last_active_timestamp
+      ? new Date(metadata.last_active_timestamp).getTime()
+      : 0;
+
+    // If last_active is older than last_sign_in, it means this is a fresh session
+    // or the first ping of the new session.
+    // We should anchor from last_sign_in in that case for the first interval?
+    // Actually, if we just logged in, last_active (old) < last_sign_in (new).
+    // The "gap" is login time -> now.
+
+    // Logic:
+    // Determine the valid anchor point for this segment of time.
+    // If we have a recent last_active that is INSIDE the current session (after last_sign_in), use it.
+    // Otherwise, use last_sign_in as the start point.
+
+    let anchorTime = lastActive;
+    if (lastSignIn > lastActive) {
+      anchorTime = lastSignIn;
+    }
+
+    const now = Date.now();
+    const diffMs = now - anchorTime;
+
+    // Safety check: ignore negative diffs or suspiciously large diffs (e.g. > 10 mins)
+    // to prevent messing up hours if clocks are weird or if a "new session" logic fails.
+    // A heartbeat is expected every 1 min. Let's allow up to 5 mins.
+    // If diff is huge, we assume we missed the boat and just reset the anchor to now without adding.
+    // BUT, if it's the first ping after login, diff might be small (seconds).
+
+    let hoursToAdd = 0;
+    if (diffMs > 0 && diffMs < 5 * 60 * 1000) {
+      hoursToAdd = diffMs / (1000 * 60 * 60);
+    }
+
+    const currentTotal = parseFloat(metadata.total_hours || "0");
+    const newTotal = currentTotal + hoursToAdd;
+
+    const { error: updateError } = await supabase.auth.updateUser({
+      data: {
+        total_hours: newTotal,
+        last_active_timestamp: new Date(now).toISOString(),
+      },
+    });
+
+    if (updateError) {
+      console.error("Failed to update user activity:", updateError);
+      return { success: false, error: updateError.message };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error in updateUserActivity:", error);
+    return { success: false, error: "Internal Server Error" };
+  }
+}
