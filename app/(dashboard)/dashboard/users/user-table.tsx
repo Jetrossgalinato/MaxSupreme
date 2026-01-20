@@ -68,7 +68,7 @@ export function UserTable({ users }: UserTableProps) {
   }, []);
 
   const getDisplayHours = (user: User) => {
-    const storedTotal = parseFloat(user.user_metadata?.total_hours || "0");
+    let total = parseFloat(user.user_metadata?.total_hours || "0");
 
     // If user is online, add the time since their last login
     if (onlineUsers.has(user.id) && user.last_sign_in_at) {
@@ -78,11 +78,17 @@ export function UserTable({ users }: UserTableProps) {
       // Ensure we don't add negative time (if system clocks are weird)
       if (diffMs > 0) {
         const currentSessionHours = diffMs / (1000 * 60 * 60);
-        return (storedTotal + currentSessionHours).toFixed(4); // Show detailed decimals for movement
+        total += currentSessionHours;
       }
     }
 
-    return storedTotal.toFixed(2);
+    const totalSeconds = Math.floor(total * 3600);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    const pad = (num: number) => num.toString().padStart(2, "0");
+    return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
   };
 
   // Form State
@@ -231,7 +237,7 @@ export function UserTable({ users }: UserTableProps) {
                     className="p-4 align-middle font-mono"
                     suppressHydrationWarning
                   >
-                    {getDisplayHours(user)} hrs
+                    {getDisplayHours(user)}
                     {onlineUsers.has(user.id) && (
                       <span
                         className="ml-2 inline-block h-2 w-2 rounded-full bg-green-500 animate-pulse align-middle"
