@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Copy, FileText, Download } from "lucide-react";
+import { Trash2, FileText, Download } from "lucide-react";
+import { deleteDocument } from "./actions";
+import Alert from "@/components/custom-alert";
 
 export interface UploadedDocument {
   id: string;
@@ -21,16 +23,53 @@ interface DocumentsTableProps {
 }
 
 export function DocumentsTable({ documents }: DocumentsTableProps) {
-  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [alert, setAlert] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
-  const copyToClipboard = (text: string, id: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
+  const handleDelete = async (id: string, filePath: string) => {
+    if (!confirm("Are you sure you want to delete this document?")) return;
+
+    setDeletingId(id);
+    const result = await deleteDocument(id, filePath);
+    setDeletingId(null);
+
+    if (result.error) {
+      setAlert({ type: "error", message: "Failed to delete document" });
+    } else {
+      setAlert({ type: "success", message: "Document deleted successfully" });
+    }
+  };
+
+  const handleDownload = async (url: string, filename: string) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Download failed:", error);
+      window.open(url, "_blank"); // Fallback
+    }
   };
 
   return (
     <div className="rounded-md border bg-card">
+      {alert && (
+        <Alert
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert(null)}
+        />
+      )}
       <div className="relative w-full overflow-auto">
         <table className="w-full caption-bottom text-sm text-left">
           <thead className="[&_tr]:border-b">
@@ -96,24 +135,22 @@ export function DocumentsTable({ documents }: DocumentsTableProps) {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => window.open(doc.file_url, "_blank")}
-                        title="Download / View"
+                        onClick={() =>
+                          handleDownload(doc.file_url, doc.file_name)
+                        }
+                        title="Download"
                       >
                         <Download className="w-4 h-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => copyToClipboard(doc.file_url, doc.id)}
-                        title="Copy Link"
+                        onClick={() => handleDelete(doc.id, doc.file_path)}
+                        disabled={deletingId === doc.id}
+                        title="Delete"
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
                       >
-                        {copiedId === doc.id ? (
-                          <span className="text-xs font-bold text-green-600">
-                            Copied
-                          </span>
-                        ) : (
-                          <Copy className="w-4 h-4" />
-                        )}
+                        <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
                   </td>
