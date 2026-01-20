@@ -39,6 +39,12 @@ export function Sidebar({ className }: SidebarProps) {
       active: pathname === "/dashboard/staff",
     },
     {
+      label: "Documents",
+      icon: LinkIcon,
+      href: "/dashboard/documents",
+      active: pathname === "/dashboard/documents",
+    },
+    {
       label: "Investors",
       icon: LineChart,
       href: "/dashboard/investors",

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { TypographyH3, TypographyMuted } from "@/components/ui/typography";
-import { cn } from "@/lib/utils";
+import { createClient } from "@/utils/supabase/client";
 
 interface UploadModalProps {
   isOpen: boolean;
@@ -19,16 +19,57 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
 
   if (!isOpen) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsLoading(true);
+    if (!file) return;
 
-    // Simulate upload delay
-    setTimeout(() => {
-      setIsLoading(false);
+    setIsLoading(true);
+    const formData = new FormData(e.currentTarget);
+    const firstName = formData.get("firstName") as string;
+    const lastName = formData.get("lastName") as string;
+    const email = formData.get("email") as string;
+    const company = formData.get("company") as string;
+
+    const supabase = createClient();
+    const timestamp = new Date().getTime();
+    const filePath = `uploads/${timestamp}_${file.name}`;
+
+    try {
+      // 1. Upload file to Storage
+      const { error: uploadError } = await supabase.storage
+        .from("documents")
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // 2. Get Public URL
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("documents").getPublicUrl(filePath);
+
+      // 3. Insert record into Database
+      const { error: dbError } = await supabase.from("documents").insert({
+        first_name: firstName,
+        last_name: lastName,
+        email: email,
+        company: company,
+        file_name: file.name,
+        file_path: filePath,
+        file_url: publicUrl,
+      });
+
+      if (dbError) throw dbError;
+
       alert("Document uploaded successfully!");
       onClose();
-    }, 1500);
+    } catch (error: unknown) {
+      console.error("Upload failed:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      alert(`Upload failed: ${errorMessage}`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,11 +107,16 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="firstName">First Name</Label>
-              <Input id="firstName" placeholder="John" required />
+              <Input
+                id="firstName"
+                name="firstName"
+                placeholder="John"
+                required
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="lastName">Last Name</Label>
-              <Input id="lastName" placeholder="Doe" required />
+              <Input id="lastName" name="lastName" placeholder="Doe" required />
             </div>
           </div>
 
@@ -78,6 +124,7 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
             <Label htmlFor="email">Email Address</Label>
             <Input
               id="email"
+              name="email"
               type="email"
               placeholder="john@example.com"
               required
@@ -86,7 +133,7 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
 
           <div className="space-y-2">
             <Label htmlFor="company">Company (Optional)</Label>
-            <Input id="company" placeholder="Acme Inc." />
+            <Input id="company" name="company" placeholder="Acme Inc." />
           </div>
 
           <div className="space-y-2">
