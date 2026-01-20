@@ -108,15 +108,18 @@ export default function FeaturesCarousel() {
         {features.map((feature, index) => (
           <div
             key={index}
+            // 1. Add the onClick handler to scroll to this index
+            onClick={() => scrollTo(index)}
             className={cn(
-              "flex-shrink-0 w-full snap-center transition-all duration-500 ease-in-out",
-              // This logic handles the blur and scale of inactive cards
+              "flex-shrink-0 w-full snap-center transition-all duration-500 ease-in-out px-4",
+              // 2. Add 'cursor-pointer' only if it's not the active card
               activeIndex !== index
-                ? "blur-[1px] opacity-60 scale-90"
+                ? "blur-[1px] opacity-60 scale-95 cursor-pointer"
                 : "blur-0 opacity-100 scale-100",
             )}
           >
-            <div className="max-w-4xl mx-auto h-full">
+            {/* 3. Wrap inner content with pointer-events-none to ensure the outer click triggers */}
+            <div className="max-w-4xl mx-auto h-full pointer-events-none">
               <FeatureCard {...feature} />
             </div>
           </div>
