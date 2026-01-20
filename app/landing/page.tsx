@@ -1,18 +1,11 @@
 import Navbar from "./components/navbar";
+import FeaturesCarousel from "./components/features-carousel";
 import Image from "next/image";
-import {
-  ArrowRight,
-  CheckCircle2,
-  BarChart3,
-  Users,
-  MessageSquare,
-  Zap,
-} from "lucide-react";
+import { ArrowRight, CheckCircle2, Zap, BarChart3 } from "lucide-react";
 import {
   TypographyH1,
   TypographyLead,
   TypographyH2,
-  TypographyH3,
   TypographyP,
   TypographyMuted,
   TypographyH4,
@@ -99,38 +92,7 @@ export default async function LandingPage() {
             </TypographyLead>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <FeatureCard
-              icon={<MessageSquare className="w-6 h-6 text-blue-500" />}
-              title="Unified Inbox"
-              description="Consolidate conversations from SMS, Email, Facebook Messenger, and Instagram DM into a single stream."
-            />
-            <FeatureCard
-              icon={<Zap className="w-6 h-6 text-yellow-500" />}
-              title="Marketing Automation"
-              description="Build powerful workflows to nurture leads automatically. Trigger actions based on behavior and engagement."
-            />
-            <FeatureCard
-              icon={<Users className="w-6 h-6 text-rose-500" />}
-              title="CRM & Pipeline"
-              description="Visual pipelines to track opportunities. Move leads through stages and never lose track of a potential sale."
-            />
-            <FeatureCard
-              icon={<BarChart3 className="w-6 h-6 text-purple-500" />}
-              title="Analytics & Reporting"
-              description="Deep insights into your campaign performance, call tracking, and team productivity."
-            />
-            <FeatureCard
-              icon={<CheckCircle2 className="w-6 h-6 text-green-500" />}
-              title="Reputation Management"
-              description="Automate review requests and manage your online reputation across Google and Facebook."
-            />
-            <FeatureCard
-              icon={<Zap className="w-6 h-6 text-orange-500" />}
-              title="Funnel Builder"
-              description="Construct high-converting landing pages and funnels with our intuitive drag-and-drop editor."
-            />
-          </div>
+          <FeaturesCarousel />
         </section>
 
         {/* Feature Highlight Section (Alternating) */}
@@ -316,26 +278,6 @@ export default async function LandingPage() {
           © {new Date().getFullYear()} MaxSupreme. All rights reserved.
         </div>
       </footer>
-    </div>
-  );
-}
-
-function FeatureCard({
-  icon,
-  title,
-  description,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="p-6 rounded-2xl border bg-card hover:shadow-lg transition-all duration-300 group">
-      <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-        {icon}
-      </div>
-      <TypographyH3 className="text-xl mb-2">{title}</TypographyH3>
-      <TypographyMuted>{description}</TypographyMuted>
     </div>
   );
 }
