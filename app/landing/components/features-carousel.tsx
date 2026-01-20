@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { TypographyH3, TypographyMuted } from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
+import UploadModal from "./upload-modal";
 
 const features = [
   {
@@ -60,6 +61,7 @@ const features = [
 export default function FeaturesCarousel() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   const scrollTo = (index: number) => {
     const container = scrollRef.current;
@@ -124,11 +126,20 @@ export default function FeaturesCarousel() {
             )}
           >
             <div className="max-w-4xl mx-auto h-full">
-              <FeatureCard {...feature} isActive={activeIndex === index} />
+              <FeatureCard
+                {...feature}
+                isActive={activeIndex === index}
+                onUploadTrigger={() => setIsUploadModalOpen(true)}
+              />
             </div>
           </div>
         ))}
       </div>
+
+      <UploadModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+      />
 
       {/* Custom Selector / Indicators */}
       <div className="flex items-center justify-center gap-2 mt-4">
@@ -154,12 +165,14 @@ function FeatureCard({
   icon,
   title,
   description,
-  isActive, // Add this prop
+  isActive,
+  onUploadTrigger,
 }: {
   icon: React.ReactNode;
   title: string;
   description: string;
   isActive?: boolean;
+  onUploadTrigger?: () => void;
 }) {
   return (
     <div className="flex flex-col items-center justify-center text-center h-full min-h-[400px] p-8 md:p-12 rounded-2xl border bg-card hover:shadow-lg transition-all duration-300 group">
@@ -191,7 +204,7 @@ function FeatureCard({
           )}
           onClick={(e) => {
             e.stopPropagation(); // Prevents triggering the carousel scroll
-            alert("Upload triggered!");
+            onUploadTrigger?.();
           }}
         >
           Upload Document
