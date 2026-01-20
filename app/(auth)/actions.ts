@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/utils/supabase/server";
+import { updateUserActivity } from "@/app/(dashboard)/dashboard/users/tracking-actions";
 
 export async function login(
   prevState: { error: string; timestamp?: number },
@@ -70,6 +71,9 @@ export async function signup(
 }
 
 export async function signout() {
+  // Capture final activity before destroying session
+  await updateUserActivity();
+
   const supabase = await createClient();
   await supabase.auth.signOut();
   revalidatePath("/", "layout");

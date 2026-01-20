@@ -70,15 +70,29 @@ export function UserTable({ users }: UserTableProps) {
   const getDisplayHours = (user: User) => {
     let total = parseFloat(user.user_metadata?.total_hours || "0");
 
-    // If user is online, add the time since their last login
-    if (onlineUsers.has(user.id) && user.last_sign_in_at) {
-      const loginTime = new Date(user.last_sign_in_at);
-      const diffMs = currentTime.getTime() - loginTime.getTime();
+    // If user is online, add the time since their last activity or login
+    if (onlineUsers.has(user.id)) {
+      // Determine the anchor time: either last_active_timestamp or last_sign_in_at
+      const lastActive = user.user_metadata?.last_active_timestamp
+        ? new Date(user.user_metadata.last_active_timestamp).getTime()
+        : 0;
+      const lastSignIn = user.last_sign_in_at
+        ? new Date(user.last_sign_in_at).getTime()
+        : 0;
 
-      // Ensure we don't add negative time (if system clocks are weird)
-      if (diffMs > 0) {
-        const currentSessionHours = diffMs / (1000 * 60 * 60);
-        total += currentSessionHours;
+      // Use the most recent timestamp as the start of the current "unaccounted" segment
+      let anchorTime = lastActive;
+      if (lastSignIn > lastActive) {
+        anchorTime = lastSignIn;
+      }
+
+      // If we have a valid anchor, calculate the live diff
+      if (anchorTime > 0) {
+        const diffMs = currentTime.getTime() - anchorTime;
+        if (diffMs > 0) {
+          const currentSessionHours = diffMs / (1000 * 60 * 60);
+          total += currentSessionHours;
+        }
       }
     }
 
