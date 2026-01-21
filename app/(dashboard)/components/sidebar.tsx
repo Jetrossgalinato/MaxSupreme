@@ -13,17 +13,21 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
-type SidebarProps = React.HTMLAttributes<HTMLDivElement>;
+type SidebarProps = React.HTMLAttributes<HTMLDivElement> & {
+  role?: string;
+};
 
-export function Sidebar({ className }: SidebarProps) {
+export function Sidebar({ className, role }: SidebarProps) {
   const pathname = usePathname();
+
+  const dashboardHref = role === "employee" ? "/employee-dashboard" : "/dashboard";
 
   const routes = [
     {
       label: "Dashboard",
       icon: LayoutDashboard,
-      href: "/dashboard",
-      active: pathname === "/dashboard",
+      href: dashboardHref,
+      active: pathname === dashboardHref,
     },
     {
       label: "Users",
