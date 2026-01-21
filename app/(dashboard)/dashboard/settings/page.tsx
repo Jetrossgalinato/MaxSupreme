@@ -14,7 +14,7 @@ import { useTheme } from "next-themes";
 import { Moon, Sun, Laptop } from "lucide-react";
 
 export default function SettingsPage() {
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   return (
     <div className="p-4 space-y-8">
@@ -41,7 +41,7 @@ export default function SettingsPage() {
               <Label>Theme</Label>
               <div className="flex flex-wrap gap-4">
                 <Button
-                  variant="outline"
+                  variant={theme === "light" ? "default" : "outline"}
                   className="flex-1"
                   onClick={() => setTheme("light")}
                 >
@@ -49,7 +49,7 @@ export default function SettingsPage() {
                   Light
                 </Button>
                 <Button
-                  variant="outline"
+                  variant={theme === "dark" ? "default" : "outline"}
                   className="flex-1"
                   onClick={() => setTheme("dark")}
                 >
@@ -57,7 +57,7 @@ export default function SettingsPage() {
                   Dark
                 </Button>
                 <Button
-                  variant="outline"
+                  variant={theme === "system" ? "default" : "outline"}
                   className="flex-1"
                   onClick={() => setTheme("system")}
                 >
