@@ -12,9 +12,20 @@ import { Label } from "@/components/ui/label";
 import { TypographyH2, TypographyMuted } from "@/components/ui/typography";
 import { useTheme } from "next-themes";
 import { Moon, Sun, Laptop } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!mounted) {
+    return null; // or a loading skeleton
+  }
 
   return (
     <div className="p-4 space-y-8">
@@ -81,9 +92,9 @@ export default function SettingsPage() {
             <div className="flex items-center justify-between space-x-2">
               <Label htmlFor="marketing-emails" className="flex-1">
                 Marketing Emails
-                <p className="text-sm font-normal text-muted-foreground">
+                <span className="block text-sm font-normal text-muted-foreground">
                   Receive emails about new features and promotions.
-                </p>
+                </span>
               </Label>
               <input
                 id="marketing-emails"
@@ -95,9 +106,9 @@ export default function SettingsPage() {
             <div className="flex items-center justify-between space-x-2">
               <Label htmlFor="security-alerts" className="flex-1">
                 Security Alerts
-                <p className="text-sm font-normal text-muted-foreground">
+                <span className="block text-sm font-normal text-muted-foreground">
                   Receive emails about your account security.
-                </p>
+                </span>
               </Label>
               <input
                 id="security-alerts"
