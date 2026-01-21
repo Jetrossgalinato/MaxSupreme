@@ -2,6 +2,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { UserTable } from "./user-table";
 import { getUsers } from "./actions";
 import { AlertCircle } from "lucide-react";
+import { TypographyH2, TypographyMuted } from "@/components/ui/typography";
 
 export const dynamic = "force-dynamic";
 
@@ -9,12 +10,14 @@ export default async function UsersPage() {
   const { users, error } = await getUsers();
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">User Management</h1>
-        <p className="text-muted-foreground">
-          Manage system users and their roles.
-        </p>
+    <div className="p-4 space-y-8">
+      <div className="flex items-center justify-between space-y-2">
+        <div>
+          <TypographyH2>User Management</TypographyH2>
+          <TypographyMuted>
+            Manage system users and their roles.
+          </TypographyMuted>
+        </div>
       </div>
 
       <Card>
