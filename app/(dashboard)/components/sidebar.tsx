@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import {
   Link as LinkIcon,
   LayoutDashboard,
-  Users,
   LineChart,
   Settings,
   UserCog,
@@ -32,12 +31,7 @@ export function Sidebar({ className }: SidebarProps) {
       href: "/dashboard/users",
       active: pathname === "/dashboard/users",
     },
-    {
-      label: "Staff",
-      icon: Users,
-      href: "/dashboard/staff",
-      active: pathname === "/dashboard/staff",
-    },
+
     {
       label: "Documents",
       icon: LinkIcon,
