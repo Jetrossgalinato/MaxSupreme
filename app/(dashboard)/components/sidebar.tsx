@@ -5,11 +5,11 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
-  Link as LinkIcon,
   LayoutDashboard,
   LineChart,
   Settings,
   UserCog,
+  FileText,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -34,7 +34,7 @@ export function Sidebar({ className }: SidebarProps) {
 
     {
       label: "Documents",
-      icon: LinkIcon,
+      icon: FileText,
       href: "/dashboard/documents",
       active: pathname === "/dashboard/documents",
     },
