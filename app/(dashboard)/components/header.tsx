@@ -29,7 +29,7 @@ export default function DashboardHeader({ user }: { user?: User | null }) {
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center border-b bg-background px-6 shadow-sm">
       <div className="flex flex-1 items-center justify-end gap-4">
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" className="rounded-full">
           <Bell className="h-5 w-5" />
         </Button>
         <ModeToggle />
