@@ -15,6 +15,12 @@ import UploadModal from "./upload-modal";
 
 const features = [
   {
+    icon: <FileUp className="w-6 h-6 text-cyan-600" />,
+    title: "Secure Document Portal",
+    description:
+      "Allow clients to securely upload and share sensitive documents directly through your platform with end-to-end encryption.",
+  },
+  {
     icon: <MessageSquare className="w-6 h-6 text-blue-500" />,
     title: "Unified Inbox",
     description:
@@ -49,12 +55,6 @@ const features = [
     title: "Funnel Builder",
     description:
       "Construct high-converting landing pages and funnels with our intuitive drag-and-drop editor.",
-  },
-  {
-    icon: <FileUp className="w-6 h-6 text-cyan-600" />,
-    title: "Secure Document Portal",
-    description:
-      "Allow clients to securely upload and share sensitive documents directly through your platform with end-to-end encryption.",
   },
 ];
 

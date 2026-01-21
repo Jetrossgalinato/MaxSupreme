@@ -29,6 +29,8 @@ export async function login(
   const role = data.user?.user_metadata?.role;
   if (role === "admin") {
     redirect("/dashboard?message=Logged+in+successfully");
+  } else if (role === "employee") {
+    redirect("/employee-dashboard?message=Logged+in+successfully");
   } else {
     redirect("/?message=Logged+in+successfully");
   }

@@ -16,7 +16,7 @@ export default async function DocumentsPage() {
   }
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-4 space-y-8">
       <div className="flex items-center justify-between space-y-2">
         <div>
           <TypographyH2>Documents</TypographyH2>

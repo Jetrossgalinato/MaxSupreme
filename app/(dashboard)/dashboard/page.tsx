@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Overview } from "../components/overview";
 import { RecentActivity } from "../components/recent-activity";
 import { StaffOnDuty } from "./components/staff-on-duty";
+import { TypographyH2, TypographyMuted } from "@/components/ui/typography";
 
 export default function DashboardPage() {
   const priorityInvestors = [
@@ -12,12 +13,14 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Overview of your properties and investments.
-        </p>
+    <div className="p-4 space-y-8">
+      <div className="flex items-center justify-between space-y-2">
+        <div>
+          <TypographyH2>Dashboard</TypographyH2>
+          <TypographyMuted>
+            Overview of your properties and investments.
+          </TypographyMuted>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
