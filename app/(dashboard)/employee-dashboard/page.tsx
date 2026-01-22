@@ -2,6 +2,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { TypographyH2, TypographyMuted } from "@/components/ui/typography";
 import { getMyTasks } from "./actions";
 import { TasksTable } from "./tasks-table";
+import { CreateTaskButton } from "./create-task-button";
 
 export default async function EmployeeDashboardPage() {
   const { data: tasks } = await getMyTasks();
@@ -19,8 +20,9 @@ export default async function EmployeeDashboardPage() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card className="col-span-full">
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle>My Tasks</CardTitle>
+            <CreateTaskButton />
           </CardHeader>
           <CardContent>
             <TasksTable tasks={tasks || []} />

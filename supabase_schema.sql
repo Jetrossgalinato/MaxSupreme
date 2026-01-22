@@ -64,3 +64,8 @@ create policy "Users can update their own tasks"
   on public.tasks for update
   using (auth.uid() = assigned_to);
 
+create policy "Users can insert their own tasks"
+  on public.tasks for insert
+  with check (auth.uid() = assigned_to);
+
+
