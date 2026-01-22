@@ -22,7 +22,7 @@ export function Sidebar({ className, role }: SidebarProps) {
 
   const dashboardHref = role === "employee" ? "/employee-dashboard" : "/dashboard";
 
-  const routes = [
+  const allRoutes = [
     {
       label: "Dashboard",
       icon: LayoutDashboard,
@@ -55,6 +55,13 @@ export function Sidebar({ className, role }: SidebarProps) {
       active: pathname === "/dashboard/settings",
     },
   ];
+
+  const routes =
+    role === "employee"
+      ? allRoutes.filter((route) =>
+          ["Dashboard", "Settings"].includes(route.label),
+        )
+      : allRoutes;
 
   return (
     <div className={cn("pb-12 min-h-screen border-r bg-background", className)}>
