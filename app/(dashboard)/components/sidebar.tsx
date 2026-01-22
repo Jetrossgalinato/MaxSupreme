@@ -10,6 +10,7 @@ import {
   Settings,
   UserCog,
   FileText,
+  User,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -22,7 +23,7 @@ export function Sidebar({ className, role }: SidebarProps) {
 
   const dashboardHref = role === "employee" ? "/employee-dashboard" : "/dashboard";
 
-  const routes = [
+  const allRoutes = [
     {
       label: "Dashboard",
       icon: LayoutDashboard,
@@ -49,12 +50,25 @@ export function Sidebar({ className, role }: SidebarProps) {
       active: pathname === "/dashboard/investors",
     },
     {
+      label: "Profile",
+      icon: User,
+      href: "/dashboard/profile",
+      active: pathname === "/dashboard/profile",
+    },
+    {
       label: "Settings",
       icon: Settings,
       href: "/dashboard/settings",
       active: pathname === "/dashboard/settings",
     },
   ];
+
+  const routes =
+    role === "employee"
+      ? allRoutes.filter((route) =>
+          ["Dashboard", "Settings", "Profile"].includes(route.label),
+        )
+      : allRoutes;
 
   return (
     <div className={cn("pb-12 min-h-screen border-r bg-background", className)}>

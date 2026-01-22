@@ -54,6 +54,15 @@ export async function updateSession(request: NextRequest) {
   // Auth Guard: Only admins can access dashboard pages
   if (user && request.nextUrl.pathname.startsWith("/dashboard")) {
     const role = user.user_metadata?.role;
+    // Allow employees to access settings and profile
+    if (
+      role === "employee" &&
+      (request.nextUrl.pathname.startsWith("/dashboard/settings") ||
+        request.nextUrl.pathname.startsWith("/dashboard/profile"))
+    ) {
+      return supabaseResponse;
+    }
+
     if (role !== "admin") {
       const url = request.nextUrl.clone();
       url.pathname = "/";
