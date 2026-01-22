@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { updateTask, deleteTask } from "./actions";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import Alert from "@/components/custom-alert";
 
 interface TasksTableProps {
   tasks: Task[];
@@ -19,6 +20,11 @@ export function TasksTable({ tasks }: TasksTableProps) {
   const router = useRouter();
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [alert, setAlert] = useState<{
+    type: "success" | "error" | "warning" | "info";
+    title: string;
+    message: string;
+  } | null>(null);
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -47,9 +53,18 @@ export function TasksTable({ tasks }: TasksTableProps) {
     setIsLoading(false);
 
     if (result.success) {
+      setAlert({
+        type: "success",
+        title: "Success",
+        message: "Task deleted successfully",
+      });
       router.refresh();
     } else {
-      alert(result.error);
+      setAlert({
+        type: "error",
+        title: "Error",
+        message: result.error || "Failed to delete task",
+      });
     }
   };
 
@@ -64,14 +79,31 @@ export function TasksTable({ tasks }: TasksTableProps) {
 
     if (result.success) {
       setEditingTask(null);
+      setAlert({
+        type: "success",
+        title: "Success",
+        message: "Task updated successfully",
+      });
       router.refresh();
     } else {
-      alert(result.error);
+      setAlert({
+        type: "error",
+        title: "Error",
+        message: result.error || "Failed to update task",
+      });
     }
   };
 
   return (
     <>
+      {alert && (
+        <Alert
+          type={alert.type}
+          title={alert.title}
+          message={alert.message}
+          onClose={() => setAlert(null)}
+        />
+      )}
       <div className="relative w-full overflow-auto rounded-md border">
         <table className="w-full caption-bottom text-sm">
           <thead className="[&_tr]:border-b">
