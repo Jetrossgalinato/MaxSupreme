@@ -377,11 +377,24 @@ export function UserTable({ users }: UserTableProps) {
 
       {/* Delete Confirmation Modal */}
       <DeleteConfirmationModal
-        user={deletingUser}
         isOpen={!!deletingUser}
         onClose={() => setDeletingUser(null)}
         onConfirm={confirmDelete}
         isLoading={isLoading}
+        title="Delete User"
+        description={
+          deletingUser ? (
+            <>
+              Are you sure you want to delete{" "}
+              <span className="font-medium text-foreground">
+                {deletingUser.user_metadata?.full_name ||
+                  deletingUser.email ||
+                  "this user"}
+              </span>
+              ? This action cannot be undone.
+            </>
+          ) : undefined
+        }
       />
     </div>
   );

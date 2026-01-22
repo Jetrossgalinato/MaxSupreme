@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import Alert from "@/components/custom-alert";
 
+import { DeleteConfirmationModal } from "@/app/(dashboard)/components/delete-confirmation-modal";
+
 interface TasksTableProps {
   tasks: Task[];
 }
@@ -29,20 +31,29 @@ export function TasksTable({ tasks }: TasksTableProps) {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'High': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
-      case 'Medium': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
-      case 'Low': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
-      default: return 'bg-gray-100 text-gray-800';
+      case "High":
+        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
+      case "Medium":
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
+      case "Low":
+        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Completed': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
-      case 'In Progress': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
-      case 'Blocked': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
-      case 'Not Started': return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
-      default: return 'bg-gray-100 text-gray-800';
+      case "Completed":
+        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
+      case "In Progress":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
+      case "Blocked":
+        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
+      case "Not Started":
+        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -52,7 +63,7 @@ export function TasksTable({ tasks }: TasksTableProps) {
 
   const confirmDelete = async () => {
     if (!deletingTask) return;
-    
+
     setIsLoading(true);
     const result = await deleteTask(deletingTask.id);
     setIsLoading(false);
@@ -113,21 +124,40 @@ export function TasksTable({ tasks }: TasksTableProps) {
       <div className="relative w-full overflow-auto rounded-md border">
         <table className="w-full caption-bottom text-sm">
           <thead className="[&_tr]:border-b">
-            <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Task</th>
-              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Priority</th>
-              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Status</th>
-              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Start Date</th>
-              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">End Date</th>
-              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Milestone</th>
-              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Notes</th>
-              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Actions</th>
+            <tr className="border-b transition-colors data-[state=selected]:bg-muted">
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                Task
+              </th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                Priority
+              </th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                Status
+              </th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                Start Date
+              </th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                End Date
+              </th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                Milestone
+              </th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                Notes
+              </th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="[&_tr:last-child]:border-0">
             {tasks.length === 0 ? (
               <tr>
-                <td colSpan={8} className="p-4 text-center text-muted-foreground">
+                <td
+                  colSpan={8}
+                  className="p-4 text-center text-muted-foreground"
+                >
                   No tasks found.
                 </td>
               </tr>
@@ -135,35 +165,61 @@ export function TasksTable({ tasks }: TasksTableProps) {
               tasks.map((task) => (
                 <tr
                   key={task.id}
-                  className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+                  className="border-b transition-colors data-[state=selected]:bg-muted"
                 >
                   <td className="p-4 align-middle font-medium">{task.title}</td>
                   <td className="p-4 align-middle">
-                    <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold", getPriorityColor(task.priority))}>
+                    <Badge
+                      className={cn(
+                        "font-semibold border-0",
+                        getPriorityColor(task.priority),
+                      )}
+                    >
                       {task.priority}
-                    </span>
+                    </Badge>
                   </td>
                   <td className="p-4 align-middle">
-                     <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold", getStatusColor(task.status))}>
+                    <Badge
+                      className={cn(
+                        "font-semibold border-0",
+                        getStatusColor(task.status),
+                      )}
+                    >
                       {task.status}
-                    </span>
+                    </Badge>
                   </td>
                   <td className="p-4 align-middle">
-                    {task.start_date ? new Date(task.start_date).toLocaleDateString() : '-'}
+                    {task.start_date
+                      ? new Date(task.start_date).toLocaleDateString()
+                      : "-"}
                   </td>
                   <td className="p-4 align-middle">
-                    {task.end_date ? new Date(task.end_date).toLocaleDateString() : '-'}
+                    {task.end_date
+                      ? new Date(task.end_date).toLocaleDateString()
+                      : "-"}
                   </td>
-                  <td className="p-4 align-middle">{task.milestone || '-'}</td>
-                  <td className="p-4 align-middle max-w-[200px] truncate" title={task.notes || ''}>
-                    {task.notes || '-'}
+                  <td className="p-4 align-middle">{task.milestone || "-"}</td>
+                  <td
+                    className="p-4 align-middle max-w-[200px] truncate"
+                    title={task.notes || ""}
+                  >
+                    {task.notes || "-"}
                   </td>
                   <td className="p-4 align-middle">
                     <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => setEditingTask(task)}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setEditingTask(task)}
+                      >
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-600" onClick={() => handleDeleteClick(task)}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-red-500 hover:text-red-600"
+                        onClick={() => handleDeleteClick(task)}
+                      >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -187,11 +243,17 @@ export function TasksTable({ tasks }: TasksTableProps) {
                 <X className="h-4 w-4" />
               </button>
             </div>
-            
+
             <form onSubmit={handleUpdate} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="title">Task Title</Label>
-                <Input id="title" name="title" required defaultValue={editingTask.title} placeholder="Enter task title" />
+                <Input
+                  id="title"
+                  name="title"
+                  required
+                  defaultValue={editingTask.title}
+                  placeholder="Enter task title"
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -227,17 +289,44 @@ export function TasksTable({ tasks }: TasksTableProps) {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="start_date">Start Date</Label>
-                  <Input id="start_date" name="start_date" type="date" defaultValue={editingTask.start_date ? new Date(editingTask.start_date).toISOString().split('T')[0] : ''} />
+                  <Input
+                    id="start_date"
+                    name="start_date"
+                    type="date"
+                    defaultValue={
+                      editingTask.start_date
+                        ? new Date(editingTask.start_date)
+                            .toISOString()
+                            .split("T")[0]
+                        : ""
+                    }
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="end_date">End Date</Label>
-                  <Input id="end_date" name="end_date" type="date" defaultValue={editingTask.end_date ? new Date(editingTask.end_date).toISOString().split('T')[0] : ''} />
+                  <Input
+                    id="end_date"
+                    name="end_date"
+                    type="date"
+                    defaultValue={
+                      editingTask.end_date
+                        ? new Date(editingTask.end_date)
+                            .toISOString()
+                            .split("T")[0]
+                        : ""
+                    }
+                  />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="milestone">Milestone</Label>
-                <Input id="milestone" name="milestone" defaultValue={editingTask.milestone || ''} placeholder="e.g. Q1 Release" />
+                <Input
+                  id="milestone"
+                  name="milestone"
+                  defaultValue={editingTask.milestone || ""}
+                  placeholder="e.g. Q1 Release"
+                />
               </div>
 
               <div className="space-y-2">
@@ -245,7 +334,7 @@ export function TasksTable({ tasks }: TasksTableProps) {
                 <textarea
                   id="notes"
                   name="notes"
-                  defaultValue={editingTask.notes || ''}
+                  defaultValue={editingTask.notes || ""}
                   className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   placeholder="Additional details..."
                 />
@@ -269,36 +358,25 @@ export function TasksTable({ tasks }: TasksTableProps) {
         </div>
       )}
 
-      {deletingTask && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-background border rounded-lg shadow-lg w-full max-w-sm p-6 animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex flex-col space-y-2 text-center sm:text-left">
-              <h3 className="text-lg font-semibold leading-none tracking-tight">
-                Delete Task
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Are you sure you want to delete{" "}
-                <span className="font-medium text-foreground">
-                  {deletingTask.title}
-                </span>
-                ? This action cannot be undone.
-              </p>
-            </div>
-            <div className="flex justify-end space-x-2 pt-6">
-              <Button variant="outline" onClick={() => setDeletingTask(null)} disabled={isLoading}>
-                Cancel
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={confirmDelete}
-                disabled={isLoading}
-              >
-                {isLoading ? "Deleting..." : "Delete"}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={!!deletingTask}
+        onClose={() => setDeletingTask(null)}
+        onConfirm={confirmDelete}
+        isLoading={isLoading}
+        title="Delete Task"
+        description={
+          deletingTask ? (
+            <>
+              Are you sure you want to delete{" "}
+              <span className="font-medium text-foreground">
+                {deletingTask.title}
+              </span>
+              ? This action cannot be undone.
+            </>
+          ) : undefined
+        }
+      />
     </>
   );
 }
