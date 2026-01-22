@@ -10,6 +10,7 @@ import {
   Settings,
   UserCog,
   FileText,
+  User,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -49,6 +50,12 @@ export function Sidebar({ className, role }: SidebarProps) {
       active: pathname === "/dashboard/investors",
     },
     {
+      label: "Profile",
+      icon: User,
+      href: "/dashboard/profile",
+      active: pathname === "/dashboard/profile",
+    },
+    {
       label: "Settings",
       icon: Settings,
       href: "/dashboard/settings",
@@ -59,7 +66,7 @@ export function Sidebar({ className, role }: SidebarProps) {
   const routes =
     role === "employee"
       ? allRoutes.filter((route) =>
-          ["Dashboard", "Settings"].includes(route.label),
+          ["Dashboard", "Settings", "Profile"].includes(route.label),
         )
       : allRoutes;
 
