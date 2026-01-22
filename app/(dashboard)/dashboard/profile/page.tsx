@@ -9,7 +9,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { TypographyH2, TypographyMuted } from "@/components/ui/typography";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AvatarUpload } from "./avatar-upload";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -58,16 +58,18 @@ export default async function ProfilePage() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex flex-col items-center sm:flex-row sm:space-x-6">
-               <Avatar className="h-24 w-24">
-                  <AvatarImage src={avatarUrl} />
-                  <AvatarFallback className="text-2xl">
-                    {fullName
+               <AvatarUpload
+                  userId={user.id}
+                  avatarUrl={avatarUrl}
+                  fallback={
+                    fullName
                       ? getInitials(fullName)
                       : firstName
                       ? getInitials(firstName + " " + lastName)
-                      : email?.slice(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
+                      : email?.slice(0, 2).toUpperCase() || "??"
+                  }
+                  className="h-24 w-24"
+                />
               <div className="mt-4 sm:mt-0 text-center sm:text-left">
                  <h3 className="text-lg font-medium">{fullName || `${firstName} ${lastName}`}</h3>
                  <p className="text-sm text-muted-foreground">{email}</p>
@@ -90,7 +92,7 @@ export default async function ProfilePage() {
               </div>
               <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" value={email} disabled />
+                <Input id="email" value={email || ""} disabled />
               </div>
             </div>
           </CardContent>
