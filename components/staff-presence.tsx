@@ -6,8 +6,14 @@ import { User } from "@supabase/supabase-js";
 import { updateUserActivity } from "@/app/(dashboard)/dashboard/users/tracking-actions";
 
 export default function StaffPresence({ user }: { user: User | null }) {
+  // Extract stable properties to avoid unnecessary re-runs when user metadata changes (e.g. last_active_timestamp)
+  const userId = user?.id;
+  const userEmail = user?.email;
+  const userFullName = user?.user_metadata?.full_name;
+  const userRole = user?.user_metadata?.role;
+
   useEffect(() => {
-    if (!user) return;
+    if (!userId || !userEmail) return;
 
     // Heartbeat to update total_hours in DB
     const heartbeatInterval = setInterval(async () => {
@@ -17,7 +23,6 @@ export default function StaffPresence({ user }: { user: User | null }) {
     // Initial ping on mount to establish "active" state
     updateUserActivity();
 
-    const role = user.user_metadata?.role;
     // Track presence for all logged in users (admins, employees, members)
     // We can filter who to show on the dashboard side
 
@@ -31,10 +36,10 @@ export default function StaffPresence({ user }: { user: User | null }) {
       .subscribe(async (status) => {
         if (status === "SUBSCRIBED") {
           await channel.track({
-            id: user.id,
-            name: user.user_metadata?.full_name || user.email,
-            email: user.email,
-            role: role,
+            id: userId,
+            name: userFullName || userEmail,
+            email: userEmail,
+            role: userRole,
             online_at: new Date().toISOString(),
           });
         }
@@ -42,12 +47,9 @@ export default function StaffPresence({ user }: { user: User | null }) {
 
     return () => {
       clearInterval(heartbeatInterval);
-      // Try to send one last pulse on unmount?
-      // Often unreliable but worth a shot if component unmounts cleanly
-      updateUserActivity();
       supabase.removeChannel(channel);
     };
-  }, [user]);
+  }, [userId, userEmail, userFullName, userRole]);
 
   return null;
 }
