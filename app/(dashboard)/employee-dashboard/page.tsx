@@ -1,7 +1,11 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { TypographyH2, TypographyMuted } from "@/components/ui/typography";
+import { getMyTasks } from "./actions";
+import { TasksTable } from "./tasks-table";
 
-export default function EmployeeDashboardPage() {
+export default async function EmployeeDashboardPage() {
+  const { data: tasks } = await getMyTasks();
+
   return (
     <div className="p-4 space-y-8">
       <div className="flex items-center justify-between space-y-2">
@@ -14,14 +18,12 @@ export default function EmployeeDashboardPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
+        <Card className="col-span-full">
           <CardHeader>
             <CardTitle>My Tasks</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">
-              You have no pending tasks for today.
-            </p>
+            <TasksTable tasks={tasks || []} />
           </CardContent>
         </Card>
 
