@@ -61,3 +61,63 @@ export async function createTask(formData: FormData): Promise<{ success: boolean
 
   return { success: true };
 }
+
+export async function updateTask(taskId: string, formData: FormData): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: "Unauthorized" };
+  }
+
+  const title = formData.get("title") as string;
+  const priority = formData.get("priority") as string;
+  const status = formData.get("status") as string;
+  const startDate = formData.get("start_date") as string || null;
+  const endDate = formData.get("end_date") as string || null;
+  const milestone = formData.get("milestone") as string || null;
+  const notes = formData.get("notes") as string || null;
+
+  const { error } = await supabase
+    .from("tasks")
+    .update({
+      title,
+      priority,
+      status,
+      start_date: startDate,
+      end_date: endDate,
+      milestone,
+      notes,
+    })
+    .eq("id", taskId)
+    .eq("assigned_to", user.id);
+
+  if (error) {
+    console.error("Error updating task:", error);
+    return { success: false, error: "Failed to update task: " + error.message };
+  }
+
+  return { success: true };
+}
+
+export async function deleteTask(taskId: string): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: "Unauthorized" };
+  }
+
+  const { error } = await supabase
+    .from("tasks")
+    .delete()
+    .eq("id", taskId)
+    .eq("assigned_to", user.id);
+
+  if (error) {
+    console.error("Error deleting task:", error);
+    return { success: false, error: "Failed to delete task: " + error.message };
+  }
+
+  return { success: true };
+}

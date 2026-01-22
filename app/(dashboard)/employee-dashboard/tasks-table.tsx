@@ -1,15 +1,25 @@
 "use client";
 
 import { Task } from "@/types/tasks";
-import { Badge } from "@/components/ui/badge"; // Assuming this exists or I'll use simple spans
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Pencil, Trash2, X } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { updateTask, deleteTask } from "./actions";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 interface TasksTableProps {
   tasks: Task[];
 }
 
 export function TasksTable({ tasks }: TasksTableProps) {
-  
+  const router = useRouter();
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'High': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
@@ -29,59 +39,197 @@ export function TasksTable({ tasks }: TasksTableProps) {
     }
   };
 
+  const handleDelete = async (taskId: string) => {
+    if (!confirm("Are you sure you want to delete this task?")) return;
+    
+    setIsLoading(true);
+    const result = await deleteTask(taskId);
+    setIsLoading(false);
+
+    if (result.success) {
+      router.refresh();
+    } else {
+      alert(result.error);
+    }
+  };
+
+  const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!editingTask) return;
+
+    setIsLoading(true);
+    const formData = new FormData(e.currentTarget);
+    const result = await updateTask(editingTask.id, formData);
+    setIsLoading(false);
+
+    if (result.success) {
+      setEditingTask(null);
+      router.refresh();
+    } else {
+      alert(result.error);
+    }
+  };
+
   return (
-    <div className="relative w-full overflow-auto rounded-md border">
-      <table className="w-full caption-bottom text-sm">
-        <thead className="[&_tr]:border-b">
-          <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Task</th>
-            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Priority</th>
-            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Status</th>
-            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Start Date</th>
-            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">End Date</th>
-            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Milestone</th>
-            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Notes</th>
-          </tr>
-        </thead>
-        <tbody className="[&_tr:last-child]:border-0">
-          {tasks.length === 0 ? (
-            <tr>
-              <td colSpan={7} className="p-4 text-center text-muted-foreground">
-                No tasks found.
-              </td>
+    <>
+      <div className="relative w-full overflow-auto rounded-md border">
+        <table className="w-full caption-bottom text-sm">
+          <thead className="[&_tr]:border-b">
+            <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Task</th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Priority</th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Status</th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Start Date</th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">End Date</th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Milestone</th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Notes</th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Actions</th>
             </tr>
-          ) : (
-            tasks.map((task) => (
-              <tr
-                key={task.id}
-                className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
-              >
-                <td className="p-4 align-middle font-medium">{task.title}</td>
-                <td className="p-4 align-middle">
-                  <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold", getPriorityColor(task.priority))}>
-                    {task.priority}
-                  </span>
-                </td>
-                <td className="p-4 align-middle">
-                   <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold", getStatusColor(task.status))}>
-                    {task.status}
-                  </span>
-                </td>
-                <td className="p-4 align-middle">
-                  {task.start_date ? new Date(task.start_date).toLocaleDateString() : '-'}
-                </td>
-                <td className="p-4 align-middle">
-                  {task.end_date ? new Date(task.end_date).toLocaleDateString() : '-'}
-                </td>
-                <td className="p-4 align-middle">{task.milestone || '-'}</td>
-                <td className="p-4 align-middle max-w-[200px] truncate" title={task.notes || ''}>
-                  {task.notes || '-'}
+          </thead>
+          <tbody className="[&_tr:last-child]:border-0">
+            {tasks.length === 0 ? (
+              <tr>
+                <td colSpan={8} className="p-4 text-center text-muted-foreground">
+                  No tasks found.
                 </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
-    </div>
+            ) : (
+              tasks.map((task) => (
+                <tr
+                  key={task.id}
+                  className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+                >
+                  <td className="p-4 align-middle font-medium">{task.title}</td>
+                  <td className="p-4 align-middle">
+                    <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold", getPriorityColor(task.priority))}>
+                      {task.priority}
+                    </span>
+                  </td>
+                  <td className="p-4 align-middle">
+                     <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold", getStatusColor(task.status))}>
+                      {task.status}
+                    </span>
+                  </td>
+                  <td className="p-4 align-middle">
+                    {task.start_date ? new Date(task.start_date).toLocaleDateString() : '-'}
+                  </td>
+                  <td className="p-4 align-middle">
+                    {task.end_date ? new Date(task.end_date).toLocaleDateString() : '-'}
+                  </td>
+                  <td className="p-4 align-middle">{task.milestone || '-'}</td>
+                  <td className="p-4 align-middle max-w-[200px] truncate" title={task.notes || ''}>
+                    {task.notes || '-'}
+                  </td>
+                  <td className="p-4 align-middle">
+                    <div className="flex items-center gap-2">
+                      <Button variant="ghost" size="icon" onClick={() => setEditingTask(task)}>
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-600" onClick={() => handleDelete(task.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {editingTask && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-background border rounded-lg shadow-lg w-full max-w-lg p-6 animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Edit Task</h3>
+              <button
+                onClick={() => setEditingTask(null)}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleUpdate} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">Task Title</Label>
+                <Input id="title" name="title" required defaultValue={editingTask.title} placeholder="Enter task title" />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="priority">Priority</Label>
+                  <select
+                    id="priority"
+                    name="priority"
+                    defaultValue={editingTask.priority}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="status">Status</Label>
+                  <select
+                    id="status"
+                    name="status"
+                    defaultValue={editingTask.status}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <option value="Not Started">Not Started</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Blocked">Blocked</option>
+                    <option value="Completed">Completed</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="start_date">Start Date</Label>
+                  <Input id="start_date" name="start_date" type="date" defaultValue={editingTask.start_date ? new Date(editingTask.start_date).toISOString().split('T')[0] : ''} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="end_date">End Date</Label>
+                  <Input id="end_date" name="end_date" type="date" defaultValue={editingTask.end_date ? new Date(editingTask.end_date).toISOString().split('T')[0] : ''} />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="milestone">Milestone</Label>
+                <Input id="milestone" name="milestone" defaultValue={editingTask.milestone || ''} placeholder="e.g. Q1 Release" />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="notes">Notes</Label>
+                <textarea
+                  id="notes"
+                  name="notes"
+                  defaultValue={editingTask.notes || ''}
+                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  placeholder="Additional details..."
+                />
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setEditingTask(null)}
+                  disabled={isLoading}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? "Updating..." : "Update Task"}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
