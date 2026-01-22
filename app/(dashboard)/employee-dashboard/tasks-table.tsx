@@ -19,6 +19,7 @@ interface TasksTableProps {
 export function TasksTable({ tasks }: TasksTableProps) {
   const router = useRouter();
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [deletingTask, setDeletingTask] = useState<Task | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState<{
     type: "success" | "error" | "warning" | "info";
@@ -45,14 +46,19 @@ export function TasksTable({ tasks }: TasksTableProps) {
     }
   };
 
-  const handleDelete = async (taskId: string) => {
-    if (!confirm("Are you sure you want to delete this task?")) return;
+  const handleDeleteClick = (task: Task) => {
+    setDeletingTask(task);
+  };
+
+  const confirmDelete = async () => {
+    if (!deletingTask) return;
     
     setIsLoading(true);
-    const result = await deleteTask(taskId);
+    const result = await deleteTask(deletingTask.id);
     setIsLoading(false);
 
     if (result.success) {
+      setDeletingTask(null);
       setAlert({
         type: "success",
         title: "Success",
@@ -157,7 +163,7 @@ export function TasksTable({ tasks }: TasksTableProps) {
                       <Button variant="ghost" size="icon" onClick={() => setEditingTask(task)}>
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-600" onClick={() => handleDelete(task.id)}>
+                      <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-600" onClick={() => handleDeleteClick(task)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -259,6 +265,37 @@ export function TasksTable({ tasks }: TasksTableProps) {
                 </Button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {deletingTask && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-background border rounded-lg shadow-lg w-full max-w-sm p-6 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex flex-col space-y-2 text-center sm:text-left">
+              <h3 className="text-lg font-semibold leading-none tracking-tight">
+                Delete Task
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Are you sure you want to delete{" "}
+                <span className="font-medium text-foreground">
+                  {deletingTask.title}
+                </span>
+                ? This action cannot be undone.
+              </p>
+            </div>
+            <div className="flex justify-end space-x-2 pt-6">
+              <Button variant="outline" onClick={() => setDeletingTask(null)} disabled={isLoading}>
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={confirmDelete}
+                disabled={isLoading}
+              >
+                {isLoading ? "Deleting..." : "Delete"}
+              </Button>
+            </div>
           </div>
         </div>
       )}

@@ -108,15 +108,19 @@ export async function deleteTask(taskId: string): Promise<{ success: boolean; er
     return { success: false, error: "Unauthorized" };
   }
 
-  const { error } = await supabase
+  const { error, count } = await supabase
     .from("tasks")
-    .delete()
+    .delete({ count: "exact" })
     .eq("id", taskId)
     .eq("assigned_to", user.id);
 
   if (error) {
     console.error("Error deleting task:", error);
     return { success: false, error: "Failed to delete task: " + error.message };
+  }
+
+  if (count === 0) {
+     return { success: false, error: "Task not found or permission denied." };
   }
 
   return { success: true };
