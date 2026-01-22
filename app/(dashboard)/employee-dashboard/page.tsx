@@ -1,7 +1,14 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { TypographyH2, TypographyMuted } from "@/components/ui/typography";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { getMyTasks } from "./actions";
+import { TasksTable } from "./tasks-table";
+import { CreateTaskButton } from "./create-task-button";
 
-export default function EmployeeDashboardPage() {
+export default async function EmployeeDashboardPage() {
+  const { data: tasks } = await getMyTasks();
+
   return (
     <div className="p-4 space-y-8">
       <div className="flex items-center justify-between space-y-2">
@@ -13,18 +20,7 @@ export default function EmployeeDashboardPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle>My Tasks</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              You have no pending tasks for today.
-            </p>
-          </CardContent>
-        </Card>
-
+      <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Announcements</CardTitle>
@@ -37,13 +33,32 @@ export default function EmployeeDashboardPage() {
         </Card>
 
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle>Schedule</CardTitle>
+            <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent className="flex flex-col items-center">
+            <div className="text-center mb-4">
+              <div className="text-xl font-bold">Weekdays</div>
+              <p className="text-xs text-muted-foreground">
+                10:00 PM - 2:00 AM
+              </p>
+            </div>
+            <Calendar
+              mode="single"
+              selected={new Date()}
+              className="rounded-md border shadow-sm"
+            />
+          </CardContent>
+        </Card>
+
+        <Card className="col-span-full">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle>My Tasks</CardTitle>
+            <CreateTaskButton />
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">
-              Your shift ends at 5:00 PM.
-            </p>
+            <TasksTable tasks={tasks || []} />
           </CardContent>
         </Card>
       </div>
