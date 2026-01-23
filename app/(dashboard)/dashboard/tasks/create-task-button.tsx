@@ -8,6 +8,7 @@ import { Plus, X } from "lucide-react";
 import { createTask } from "./actions";
 import { useRouter } from "next/navigation";
 import { User } from "@supabase/supabase-js";
+import Alert from "@/components/custom-alert";
 
 interface CreateTaskButtonProps {
   users: User[];
@@ -16,6 +17,11 @@ interface CreateTaskButtonProps {
 export function CreateTaskButton({ users }: CreateTaskButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [alert, setAlert] = useState<{
+    type: "success" | "error" | "warning" | "info";
+    title: string;
+    message: string;
+  } | null>(null);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -27,14 +33,31 @@ export function CreateTaskButton({ users }: CreateTaskButtonProps) {
 
     if (result.success) {
       setIsOpen(false);
+      setAlert({
+        type: "success",
+        title: "Success",
+        message: "Task created successfully.",
+      });
       router.refresh();
     } else {
-      alert(result.error);
+      setAlert({
+        type: "error",
+        title: "Error",
+        message: result.error || "Failed to create task.",
+      });
     }
   };
 
   return (
     <>
+      {alert && (
+        <Alert
+          type={alert.type}
+          title={alert.title}
+          message={alert.message}
+          onClose={() => setAlert(null)}
+        />
+      )}
       <Button onClick={() => setIsOpen(true)} size="sm">
         <Plus className="mr-2 h-4 w-4" />
         Add Task
