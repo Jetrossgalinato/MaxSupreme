@@ -36,7 +36,15 @@ export async function getAllTasks(): Promise<{ success: boolean; data?: Task[]; 
 }
 
 export async function createTask(formData: FormData): Promise<{ success: boolean; error?: string }> {
+  // 1. Verify admin access
   const supabase = await createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+  if (authError || !user) return { success: false, error: "Unauthorized" };
+  if (user.user_metadata?.role !== 'admin') return { success: false, error: "Forbidden" };
+
+  // 2. Use Admin Client for the write operation
+  const adminClient = createAdminClient();
 
   const title = formData.get("title") as string;
   const priority = formData.get("priority") as string;
@@ -47,7 +55,7 @@ export async function createTask(formData: FormData): Promise<{ success: boolean
   const notes = formData.get("notes") as string || null;
   const assignedTo = formData.get("assigned_to") as string || null;
 
-  const { error } = await supabase
+  const { error } = await adminClient
     .from("tasks")
     .insert({
       title,
@@ -70,7 +78,15 @@ export async function createTask(formData: FormData): Promise<{ success: boolean
 }
 
 export async function updateTask(taskId: string, formData: FormData): Promise<{ success: boolean; error?: string }> {
+  // 1. Verify admin access
   const supabase = await createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+  if (authError || !user) return { success: false, error: "Unauthorized" };
+  if (user.user_metadata?.role !== 'admin') return { success: false, error: "Forbidden" };
+
+  // 2. Use Admin Client for the write operation
+  const adminClient = createAdminClient();
 
   const title = formData.get("title") as string;
   const priority = formData.get("priority") as string;
@@ -81,7 +97,7 @@ export async function updateTask(taskId: string, formData: FormData): Promise<{ 
   const notes = formData.get("notes") as string || null;
   const assignedTo = formData.get("assigned_to") as string || null;
 
-  const { error } = await supabase
+  const { error } = await adminClient
     .from("tasks")
     .update({
       title,
@@ -105,9 +121,17 @@ export async function updateTask(taskId: string, formData: FormData): Promise<{ 
 }
 
 export async function deleteTask(taskId: string): Promise<{ success: boolean; error?: string }> {
+  // 1. Verify admin access
   const supabase = await createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-  const { error } = await supabase
+  if (authError || !user) return { success: false, error: "Unauthorized" };
+  if (user.user_metadata?.role !== 'admin') return { success: false, error: "Forbidden" };
+
+  // 2. Use Admin Client for the write operation
+  const adminClient = createAdminClient();
+
+  const { error } = await adminClient
     .from("tasks")
     .delete()
     .eq("id", taskId);
