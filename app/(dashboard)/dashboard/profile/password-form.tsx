@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, useEffect } from "react";
 import { updatePassword } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +27,22 @@ export function PasswordForm() {
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [alertState, setAlertState] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
+
+  useEffect(() => {
+    // Use a timeout to avoid synchronous state updates during rendering
+    const timer = setTimeout(() => {
+      if (state.error) {
+        setAlertState({ type: "error", message: state.error });
+      } else if (state.success && state.message) {
+        setAlertState({ type: "success", message: state.message });
+      }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [state]);
 
   return (
     <Card>
@@ -38,9 +54,12 @@ export function PasswordForm() {
       </CardHeader>
       <form action={action}>
         <CardContent className="space-y-4">
-          {state.error && <Alert type="error" message={state.error} />}
-          {state.success && state.message && (
-            <Alert type="success" message={state.message} />
+          {alertState && (
+            <Alert
+              type={alertState.type}
+              message={alertState.message}
+              onClose={() => setAlertState(null)}
+            />
           )}
           <div className="space-y-2">
             <Label htmlFor="oldPassword">Old Password</Label>

@@ -8,7 +8,7 @@ interface AlertProps {
   type: "success" | "error" | "warning" | "info";
   title?: string;
   message: string;
-  onClose: () => void;
+  onClose?: () => void;
   autoClose?: boolean;
   duration?: number;
 }
@@ -17,7 +17,7 @@ const Alert: React.FC<AlertProps> = ({
   type,
   title,
   message,
-  onClose,
+  onClose = () => {},
   autoClose = true,
   duration = 5000,
 }) => {
