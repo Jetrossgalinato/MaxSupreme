@@ -28,10 +28,10 @@ export async function updateProfileAvatar(avatarUrl: string) {
 
 export async function updatePassword(
   prevState: { success?: boolean; error?: string; message?: string },
-  formData: FormData
+  formData: FormData,
 ) {
   const supabase = await createClient();
-  
+
   const oldPassword = formData.get("oldPassword") as string;
   const password = formData.get("password") as string;
   const confirmPassword = formData.get("confirmPassword") as string;
@@ -79,16 +79,15 @@ export async function updatePassword(
 
 export async function updateProfile(
   prevState: { success?: boolean; error?: string; message?: string },
-  formData: FormData
+  formData: FormData,
 ) {
   const supabase = await createClient();
 
   const firstName = formData.get("firstName") as string;
   const lastName = formData.get("lastName") as string;
-  const email = formData.get("email") as string;
 
-  if (!firstName || !lastName || !email) {
-    return { success: false, error: "All fields are required." };
+  if (!firstName || !lastName) {
+    return { success: false, error: "First name and last name are required." };
   }
 
   const {
@@ -100,7 +99,6 @@ export async function updateProfile(
   }
 
   const updates: {
-    email?: string;
     data: { first_name: string; last_name: string; full_name: string };
   } = {
     data: {
@@ -110,10 +108,6 @@ export async function updateProfile(
     },
   };
 
-  if (email !== user.email) {
-    updates.email = email;
-  }
-
   const { error } = await supabase.auth.updateUser(updates);
 
   if (error) {
@@ -122,10 +116,6 @@ export async function updateProfile(
   }
 
   revalidatePath("/dashboard/profile");
-  
-  if (email !== user.email) {
-      return { success: true, message: "Profile updated. Please check your new email for a verification link." };
-  }
 
   return { success: true, message: "Profile updated successfully." };
 }

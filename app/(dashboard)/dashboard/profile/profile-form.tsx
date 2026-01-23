@@ -21,23 +21,26 @@ const initialState = {
 
 export function ProfileForm({ firstName, lastName, email }: ProfileFormProps) {
   // @ts-ignore
-  const [state, action, isPending] = useActionState(updateProfile, initialState);
+  const [state, action, isPending] = useActionState(
+    updateProfile,
+    initialState,
+  );
   const [alertState, setAlertState] = useState<{
     type: "success" | "error";
     message: string;
   } | null>(null);
 
   useEffect(() => {
-      // Use a timeout to avoid synchronous state updates during rendering
-      const timer = setTimeout(() => {
-        if (state.error) {
-          setAlertState({ type: "error", message: state.error });
-        } else if (state.success && state.message) {
-          setAlertState({ type: "success", message: state.message });
-        }
-      }, 0);
-      return () => clearTimeout(timer);
-    }, [state]);
+    // Use a timeout to avoid synchronous state updates during rendering
+    const timer = setTimeout(() => {
+      if (state.error) {
+        setAlertState({ type: "error", message: state.error });
+      } else if (state.success && state.message) {
+        setAlertState({ type: "success", message: state.message });
+      }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [state]);
 
   return (
     <form action={action} className="space-y-8">
@@ -76,7 +79,7 @@ export function ProfileForm({ firstName, lastName, email }: ProfileFormProps) {
             name="email"
             type="email"
             defaultValue={email}
-            required
+            disabled
             placeholder="Enter your email"
           />
         </div>
