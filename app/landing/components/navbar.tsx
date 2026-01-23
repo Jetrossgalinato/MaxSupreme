@@ -42,15 +42,24 @@ export default function Navbar({ user }: { user?: User | null }) {
           />
 
           <div className="hidden md:flex items-center gap-1">
-            {links.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                className="px-4 py-2 text-sm font-medium text-foreground hover:text-foreground/80 hover:bg-foreground/10 rounded-full transition-all duration-200"
-              >
-                {link.name}
-              </a>
-            ))}
+            {links.map((link) => {
+              let href = link.href;
+              if (link.name === "Work" && user) {
+                href =
+                  user.user_metadata?.role === "admin"
+                    ? "/dashboard"
+                    : "/employee-dashboard";
+              }
+              return (
+                <Link
+                  key={link.name}
+                  href={href}
+                  className="px-4 py-2 text-sm font-medium text-foreground hover:text-foreground/80 hover:bg-foreground/10 rounded-full transition-all duration-200"
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
           </div>
         </div>
 

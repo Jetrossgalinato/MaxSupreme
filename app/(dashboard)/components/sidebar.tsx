@@ -11,6 +11,7 @@ import {
   UserCog,
   FileText,
   User,
+  ListTodo,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -29,6 +30,12 @@ export function Sidebar({ className, role }: SidebarProps) {
       icon: LayoutDashboard,
       href: dashboardHref,
       active: pathname === dashboardHref,
+    },
+    {
+      label: "Tasks",
+      icon: ListTodo,
+      href: "/dashboard/tasks",
+      active: pathname === "/dashboard/tasks",
     },
     {
       label: "Users",

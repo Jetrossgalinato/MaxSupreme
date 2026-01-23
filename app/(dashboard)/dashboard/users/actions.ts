@@ -10,7 +10,7 @@ export async function getUsers() {
     const {
       data: { users },
       error,
-    } = await supabase.auth.admin.listUsers();
+    } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
 
     if (error) {
       console.error("Error fetching users:", error);
