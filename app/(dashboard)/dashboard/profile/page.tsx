@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { TypographyH2, TypographyMuted } from "@/components/ui/typography";
 import { AvatarUpload } from "./avatar-upload";
+import { PasswordForm } from "./password-form";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -97,6 +98,8 @@ export default async function ProfilePage() {
             </div>
           </CardContent>
         </Card>
+
+        <PasswordForm />
       </div>
     </div>
   );
