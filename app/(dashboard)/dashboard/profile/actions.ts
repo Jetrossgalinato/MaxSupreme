@@ -76,3 +76,56 @@ export async function updatePassword(
   revalidatePath("/dashboard/profile");
   return { success: true, message: "Password updated successfully." };
 }
+
+export async function updateProfile(
+  prevState: { success?: boolean; error?: string; message?: string },
+  formData: FormData
+) {
+  const supabase = await createClient();
+
+  const firstName = formData.get("firstName") as string;
+  const lastName = formData.get("lastName") as string;
+  const email = formData.get("email") as string;
+
+  if (!firstName || !lastName || !email) {
+    return { success: false, error: "All fields are required." };
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: "User not authenticated." };
+  }
+
+  const updates: {
+    email?: string;
+    data: { first_name: string; last_name: string; full_name: string };
+  } = {
+    data: {
+      first_name: firstName,
+      last_name: lastName,
+      full_name: `${firstName} ${lastName}`,
+    },
+  };
+
+  if (email !== user.email) {
+    updates.email = email;
+  }
+
+  const { error } = await supabase.auth.updateUser(updates);
+
+  if (error) {
+    console.error("Error updating profile:", error);
+    return { success: false, error: error.message };
+  }
+
+  revalidatePath("/dashboard/profile");
+  
+  if (email !== user.email) {
+      return { success: true, message: "Profile updated. Please check your new email for a verification link." };
+  }
+
+  return { success: true, message: "Profile updated successfully." };
+}

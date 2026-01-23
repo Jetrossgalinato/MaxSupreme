@@ -6,11 +6,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { TypographyH2, TypographyMuted } from "@/components/ui/typography";
 import { AvatarUpload } from "./avatar-upload";
 import { PasswordForm } from "./password-form";
+import { ProfileForm } from "./profile-form";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -82,20 +81,11 @@ export default async function ProfilePage() {
               </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
-                <Input id="firstName" value={firstName} disabled />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input id="lastName" value={lastName} disabled />
-              </div>
-              <div className="space-y-2 sm:col-span-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" value={email || ""} disabled />
-              </div>
-            </div>
+            <ProfileForm 
+              firstName={firstName} 
+              lastName={lastName} 
+              email={email || ""} 
+            />
           </CardContent>
         </Card>
 

@@ -18,11 +18,12 @@ import { Eye, EyeOff } from "lucide-react";
 
 const initialState = {
   success: false,
-  error: "",
-  message: "",
+  error: undefined,
+  message: undefined,
 };
 
 export function PasswordForm() {
+  // @ts-ignore
   const [state, action, isPending] = useActionState(updatePassword, initialState);
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
