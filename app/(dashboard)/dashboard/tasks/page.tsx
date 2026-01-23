@@ -1,7 +1,6 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { getAllTasks } from "./actions";
 import { getUsers } from "../users/actions";
-import { TasksTable } from "./tasks-table";
+import { EmployeeTasksView } from "./employee-tasks-view";
 import { CreateTaskButton } from "./create-task-button";
 
 export default async function TasksPage() {
@@ -12,22 +11,15 @@ export default async function TasksPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Tasks</h2>
+          <h2 className="text-3xl font-bold tracking-tight">Tasks Overview</h2>
           <p className="text-muted-foreground">
-            Manage and assign tasks to team members.
+            Manage and assign tasks by employee.
           </p>
         </div>
         <CreateTaskButton users={users || []} />
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>All Tasks</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <TasksTable tasks={tasks || []} users={users || []} />
-        </CardContent>
-      </Card>
+      <EmployeeTasksView tasks={tasks || []} users={users || []} />
     </div>
   );
 }

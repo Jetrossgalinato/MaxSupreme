@@ -1,14 +1,28 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { createAdminClient } from "@/utils/supabase/admin";
 import { Task } from "@/types/tasks";
 import { revalidatePath } from "next/cache";
 
 export async function getAllTasks(): Promise<{ success: boolean; data?: Task[]; error?: string }> {
+  // 1. Verify the user is authenticated and is an admin
   const supabase = await createClient();
-  
-  // RLS policy "Admins can view all tasks" should handle permission check
-  const { data, error } = await supabase
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return { success: false, error: "Unauthorized" };
+  }
+
+  // Check role
+  const role = user.user_metadata?.role;
+  if (role !== 'admin') {
+     return { success: false, error: "Forbidden: Admin access required" };
+  }
+
+  // 2. Use Admin Client to fetch ALL tasks (bypassing RLS)
+  const adminClient = createAdminClient();
+  const { data, error } = await adminClient
     .from("tasks")
     .select("*")
     .order("created_at", { ascending: false });
