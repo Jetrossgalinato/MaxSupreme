@@ -8,6 +8,8 @@ import { CreateTaskButton } from "./create-task-button";
 
 export default async function EmployeeDashboardPage() {
   const { data: tasks } = await getMyTasks();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   return (
     <div className="p-4 space-y-8">
@@ -46,8 +48,9 @@ export default async function EmployeeDashboardPage() {
             </div>
             <Calendar
               mode="single"
-              selected={new Date()}
+              selected={today}
               className="rounded-md border shadow-sm"
+              disabled={[{ before: today }]}
             />
           </CardContent>
         </Card>
