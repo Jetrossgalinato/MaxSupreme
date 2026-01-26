@@ -412,21 +412,6 @@ export function UserTable({ users }: UserTableProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="total-hours">Total Hours</Label>
-                  <Input
-                    id="total-hours"
-                    type="number"
-                    min="0"
-                    step="0.1"
-                    value={totalHours}
-                    onChange={(e) =>
-                      setTotalHours(parseFloat(e.target.value) || 0)
-                    }
-                    placeholder="0"
-                  />
-                </div>
-
-                <div className="space-y-2">
                   <Label htmlFor="role">Role</Label>
                   <select
                     id="role"
