@@ -72,7 +72,49 @@ export function UserTable({ users }: UserTableProps) {
   }, []);
 
   const getDisplayHours = (user: User) => {
-    let total = parseFloat(user.user_metadata?.total_hours || "0");
+    let total = 0;
+    const workLog = (user.user_metadata?.work_log || {}) as Record<
+      string,
+      number
+    >;
+
+    // Calculate base hours based on filter
+    if (timeFilter === "all") {
+      total = parseFloat(user.user_metadata?.total_hours || "0");
+    } else {
+      const now = new Date();
+      // Use UTC to match the server-side logging which uses UTC dates
+      const currentUTCYear = now.getUTCFullYear();
+      const currentUTCMonth = now.getUTCMonth();
+
+      // Calculate start of week (Sunday) in UTC
+      const dayOfWeek = now.getUTCDay();
+      const startOfWeek = new Date(now);
+      startOfWeek.setUTCDate(now.getUTCDate() - dayOfWeek);
+      startOfWeek.setUTCHours(0, 0, 0, 0);
+
+      Object.entries(workLog).forEach(([dateStr, hours]) => {
+        // dateStr is in YYYY-MM-DD format
+        const [y, m, d] = dateStr.split("-").map(Number);
+        const entryDate = new Date(Date.UTC(y, m - 1, d));
+
+        if (timeFilter === "today") {
+          const todayStr = now.toISOString().split("T")[0];
+          if (dateStr === todayStr) {
+            total += hours;
+          }
+        } else if (timeFilter === "week") {
+          // Include if entry is on or after start of current week
+          if (entryDate >= startOfWeek) {
+            total += hours;
+          }
+        } else if (timeFilter === "month") {
+          if (y === currentUTCYear && m - 1 === currentUTCMonth) {
+            total += hours;
+          }
+        }
+      });
+    }
 
     // If user is online, add the time since their last activity or login
     if (onlineUsers.has(user.id)) {
@@ -95,6 +137,8 @@ export function UserTable({ users }: UserTableProps) {
         const diffMs = currentTime.getTime() - anchorTime;
         if (diffMs > 0) {
           const currentSessionHours = diffMs / (1000 * 60 * 60);
+
+          // Live session counts for all time filters as it is happening "now"
           total += currentSessionHours;
         }
       }

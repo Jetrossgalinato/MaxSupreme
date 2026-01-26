@@ -58,9 +58,17 @@ export async function updateUserActivity() {
     const currentTotal = parseFloat(metadata.total_hours || "0");
     const newTotal = currentTotal + hoursToAdd;
 
+    // Update work_log for granular tracking
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+    const workLog = metadata.work_log || {};
+    const currentToday =
+      typeof workLog[today] === "number" ? workLog[today] : 0;
+    workLog[today] = currentToday + hoursToAdd;
+
     const { error: updateError } = await supabase.auth.updateUser({
       data: {
         total_hours: newTotal,
+        work_log: workLog,
         last_active_timestamp: new Date(now).toISOString(),
       },
     });
