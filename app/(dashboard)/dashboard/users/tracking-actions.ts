@@ -65,6 +65,7 @@ export async function updateUserActivity() {
       typeof workLog[today] === "number" ? workLog[today] : 0;
     workLog[today] = currentToday + hoursToAdd;
 
+    // 1. Update Metadata (Legacy/Backup)
     const { error: updateError } = await supabase.auth.updateUser({
       data: {
         total_hours: newTotal,
@@ -76,6 +77,40 @@ export async function updateUserActivity() {
     if (updateError) {
       console.error("Failed to update user activity:", updateError);
       return { success: false, error: updateError.message };
+    }
+
+    // 2. Update work_logs table
+    if (hoursToAdd > 0) {
+      // Check for existing record
+      const { data: existingLog, error: fetchError } = await supabase
+        .from("work_logs")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("work_date", today)
+        .single();
+
+      if (fetchError && fetchError.code !== "PGRST116") {
+        // PGRST116 is "no rows returned"
+        console.error("Error fetching work log:", fetchError);
+      }
+
+      if (existingLog) {
+        // Update
+        await supabase
+          .from("work_logs")
+          .update({
+            hours_worked: (Number(existingLog.hours_worked) || 0) + hoursToAdd,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", existingLog.id);
+      } else {
+        // Insert
+        await supabase.from("work_logs").insert({
+          user_id: user.id,
+          work_date: today,
+          hours_worked: hoursToAdd,
+        });
+      }
     }
 
     return { success: true };
