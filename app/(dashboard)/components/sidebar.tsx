@@ -22,7 +22,8 @@ type SidebarProps = React.HTMLAttributes<HTMLDivElement> & {
 export function Sidebar({ className, role }: SidebarProps) {
   const pathname = usePathname();
 
-  const dashboardHref = role === "employee" ? "/employee-dashboard" : "/dashboard";
+  const dashboardHref =
+    role === "employee" ? "/employee-dashboard" : "/dashboard";
 
   const allRoutes = [
     {
@@ -82,15 +83,20 @@ export function Sidebar({ className, role }: SidebarProps) {
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
           <div className="flex items-center pl-2 mb-8">
-            <div className="relative w-8 h-8 mr-2">
-              <Image
-                fill
-                alt="Logo"
-                src="/logo.png"
-                className="object-contain"
-              />
+            <div className="dark:bg-foreground rounded-full pl-3">
+              <div className="relative w-8 h-8 mr-2">
+                <Image
+                  fill
+                  alt="Logo"
+                  src="/logo.png"
+                  className="object-contain"
+                />
+              </div>
             </div>
-            <h2 className="text-xl font-bold tracking-tight">Max Supreme</h2>
+
+            <h2 className="text-xl font-bold tracking-tight ml-2">
+              Max Supreme
+            </h2>
           </div>
           <div className="space-y-1">
             {routes.map((route) => (
