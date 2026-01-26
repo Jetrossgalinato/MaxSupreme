@@ -33,13 +33,9 @@ export default function Navbar({ user }: { user?: User | null }) {
       <div className="flex items-center justify-between w-full max-w-7xl bg-background/70 backdrop-blur-md p-2 rounded-full shadow-sm ring-1 ring-black/5">
         {/* Left Side: Logo and Nav Links */}
         <div className="flex items-center gap-6">
-          <Image
-            src="/logo.png"
-            alt="Logo"
-            width={36}
-            height={36}
-            className="ml-4 flex-shrink-0"
-          />
+          <div className="dark:bg-foreground px-3 py-2 rounded-full">
+            <Image src="/logo.png" alt="Logo" width={36} height={36} />
+          </div>
 
           <div className="hidden md:flex items-center gap-1">
             {links.map((link) => {
@@ -82,7 +78,7 @@ export default function Navbar({ user }: { user?: User | null }) {
                         ? getInitials(
                             user.user_metadata.first_name +
                               " " +
-                              (user.user_metadata.last_name || "")
+                              (user.user_metadata.last_name || ""),
                           )
                         : user.email?.slice(0, 2).toUpperCase()}
                     </AvatarFallback>
