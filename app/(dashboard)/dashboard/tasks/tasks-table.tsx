@@ -160,6 +160,9 @@ export function TasksTable({ tasks, users }: TasksTableProps) {
                 Milestone
               </th>
               <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                Notes
+              </th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
                 Actions
               </th>
             </tr>
@@ -181,7 +184,9 @@ export function TasksTable({ tasks, users }: TasksTableProps) {
                   className="border-b transition-colors data-[state=selected]:bg-muted"
                 >
                   <td className="p-4 align-middle font-medium">{task.title}</td>
-                  <td className="p-4 align-middle">{getUserName(task.assigned_to)}</td>
+                  <td className="p-4 align-middle">
+                    {getUserName(task.assigned_to)}
+                  </td>
                   <td className="p-4 align-middle">
                     <Badge
                       className={cn(
@@ -213,6 +218,7 @@ export function TasksTable({ tasks, users }: TasksTableProps) {
                       : "-"}
                   </td>
                   <td className="p-4 align-middle">{task.milestone || "-"}</td>
+                  <td className="p-4 align-middle">{task.notes || "-"}</td>
                   <td className="p-4 align-middle">
                     <div className="flex items-center gap-2">
                       <Button
