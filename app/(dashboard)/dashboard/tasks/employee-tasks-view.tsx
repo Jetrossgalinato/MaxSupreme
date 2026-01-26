@@ -67,30 +67,36 @@ export function EmployeeTasksView({ tasks, users }: EmployeeTasksViewProps) {
       {/* Unassigned Tasks */}
       {unassignedTasks.length > 0 && (
         <Card className="overflow-hidden border-dashed">
-           <div 
-            className="p-6 flex items-center justify-between cursor-pointer hover:bg-muted/50 transition-colors" 
+          <div
+            className="p-6 flex items-center justify-between cursor-pointer hover:bg-muted/50 transition-colors"
             onClick={() => toggleUser("unassigned")}
-           >
-              <div className="flex items-center gap-4">
-                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-                    <UserIcon className="h-5 w-5 text-muted-foreground" />
-                 </div>
-                 <div>
-                    <CardTitle className="text-lg">Unassigned Tasks</CardTitle>
-                    <p className="text-sm text-muted-foreground">{unassignedTasks.length} tasks need assignment</p>
-                 </div>
+          >
+            <div className="flex items-center gap-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
+                <UserIcon className="h-5 w-5 text-muted-foreground" />
               </div>
-              <Button variant="ghost" size="sm">
-                {expandedUsers.has("unassigned") ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-              </Button>
+              <div>
+                <CardTitle className="text-lg">Unassigned Tasks</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  {unassignedTasks.length} tasks need assignment
+                </p>
+              </div>
             </div>
-           {expandedUsers.has("unassigned") && (
-             <div className="border-t">
-               <CardContent className="pt-6">
-                 <TasksTable tasks={unassignedTasks} users={users} />
-               </CardContent>
-             </div>
-           )}
+            <Button variant="ghost" size="sm">
+              {expandedUsers.has("unassigned") ? (
+                <ChevronUp className="h-4 w-4" />
+              ) : (
+                <ChevronDown className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
+          {expandedUsers.has("unassigned") && (
+            <div className="border-t">
+              <CardContent className="pt-6">
+                <TasksTable tasks={unassignedTasks} users={users} />
+              </CardContent>
+            </div>
+          )}
         </Card>
       )}
 
@@ -101,13 +107,17 @@ export function EmployeeTasksView({ tasks, users }: EmployeeTasksViewProps) {
         const name = getUserName(user);
 
         // Stats
-        const inProgress = userTasks.filter(t => t.status === 'In Progress').length;
-        const blocked = userTasks.filter(t => t.status === 'Blocked').length;
-        const highPriority = userTasks.filter(t => t.priority === 'High').length;
+        const inProgress = userTasks.filter(
+          (t) => t.status === "In Progress",
+        ).length;
+        const blocked = userTasks.filter((t) => t.status === "Blocked").length;
+        const highPriority = userTasks.filter(
+          (t) => t.priority === "High" && t.status !== "Completed",
+        ).length;
 
         return (
           <Card key={user.id} className="overflow-hidden">
-            <div 
+            <div
               className="p-6 flex items-center justify-between cursor-pointer hover:bg-muted/50 transition-colors"
               onClick={() => toggleUser(user.id)}
             >
@@ -123,75 +133,111 @@ export function EmployeeTasksView({ tasks, users }: EmployeeTasksViewProps) {
               </div>
 
               <div className="flex items-center gap-4 md:gap-6">
-                 {/* Task Summary Badges - Only show if tasks exist */}
-                 {userTasks.length > 0 ? (
-                    <div className="hidden md:flex gap-2 items-center">
-                        {highPriority > 0 && <Badge variant="destructive">{highPriority} High Priority</Badge>}
-                        {blocked > 0 && <Badge variant="outline" className="border-red-200 text-red-700 bg-red-50">{blocked} Blocked</Badge>}
-                        {inProgress > 0 && <Badge variant="secondary" className="bg-blue-50 text-blue-700 hover:bg-blue-100">{inProgress} In Progress</Badge>}
-                        <Badge variant="outline">{userTasks.length} Total</Badge>
-                    </div>
-                 ) : (
-                    <span className="text-sm text-muted-foreground italic hidden md:block">No tasks assigned</span>
-                 )}
+                {/* Task Summary Badges - Only show if tasks exist */}
+                {userTasks.length > 0 ? (
+                  <div className="hidden md:flex gap-2 items-center">
+                    {highPriority > 0 && (
+                      <Badge variant="destructive">
+                        {highPriority} High Priority
+                      </Badge>
+                    )}
+                    {blocked > 0 && (
+                      <Badge
+                        variant="outline"
+                        className="border-red-200 text-red-700 bg-red-50"
+                      >
+                        {blocked} Blocked
+                      </Badge>
+                    )}
+                    {inProgress > 0 && (
+                      <Badge
+                        variant="secondary"
+                        className="bg-blue-50 text-blue-700 hover:bg-blue-100"
+                      >
+                        {inProgress} In Progress
+                      </Badge>
+                    )}
+                    <Badge variant="outline">{userTasks.length} Total</Badge>
+                  </div>
+                ) : (
+                  <span className="text-sm text-muted-foreground italic hidden md:block">
+                    No tasks assigned
+                  </span>
+                )}
 
                 <Button variant="ghost" size="icon">
-                  {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                  {isExpanded ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
                 </Button>
               </div>
             </div>
-            
+
             {isExpanded && (
-               <div className="border-t">
-                  <CardContent className="pt-6">
-                    {userTasks.length > 0 ? (
-                        <TasksTable tasks={userTasks} users={users} />
-                    ) : (
-                        <div className="text-center py-8 text-muted-foreground">
-                            No tasks assigned to this employee.
-                        </div>
-                    )}
-                  </CardContent>
-               </div>
+              <div className="border-t">
+                <CardContent className="pt-6">
+                  {userTasks.length > 0 ? (
+                    <TasksTable tasks={userTasks} users={users} />
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      No tasks assigned to this employee.
+                    </div>
+                  )}
+                </CardContent>
+              </div>
             )}
           </Card>
         );
       })}
 
       {/* Tasks for Unknown/Deleted Users */}
-      {Object.keys(tasksByUser).map(userId => {
-          if (users.find(u => u.id === userId)) return null; // Already handled
-          const unknownUserTasks = tasksByUser[userId];
-          const isExpanded = expandedUsers.has(userId);
+      {Object.keys(tasksByUser).map((userId) => {
+        if (users.find((u) => u.id === userId)) return null; // Already handled
+        const unknownUserTasks = tasksByUser[userId];
+        const isExpanded = expandedUsers.has(userId);
 
-          return (
-            <Card key={userId} className="overflow-hidden border-dashed border-yellow-200 bg-yellow-50/10">
-                <div 
-                className="p-6 flex items-center justify-between cursor-pointer hover:bg-muted/50 transition-colors" 
-                onClick={() => toggleUser(userId)}
-                >
-                    <div className="flex items-center gap-4">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-100 text-yellow-600">
-                            ?
-                        </div>
-                        <div>
-                            <CardTitle className="text-lg text-yellow-700">Unknown User ({userId.slice(0, 8)}...)</CardTitle>
-                            <p className="text-sm text-yellow-600/80">{unknownUserTasks.length} tasks assigned to a missing or deleted user</p>
-                        </div>
-                    </div>
-                    <Button variant="ghost" size="sm">
-                        {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                    </Button>
+        return (
+          <Card
+            key={userId}
+            className="overflow-hidden border-dashed border-yellow-200 bg-yellow-50/10"
+          >
+            <div
+              className="p-6 flex items-center justify-between cursor-pointer hover:bg-muted/50 transition-colors"
+              onClick={() => toggleUser(userId)}
+            >
+              <div className="flex items-center gap-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-100 text-yellow-600">
+                  ?
                 </div>
-                {isExpanded && (
-                    <div className="border-t border-yellow-200">
-                        <CardContent className="pt-6">
-                            <TasksTable tasks={unknownUserTasks} users={users} />
-                        </CardContent>
-                    </div>
+                <div>
+                  <CardTitle className="text-lg text-yellow-700">
+                    Unknown User ({userId.slice(0, 8)}...)
+                  </CardTitle>
+                  <p className="text-sm text-yellow-600/80">
+                    {unknownUserTasks.length} tasks assigned to a missing or
+                    deleted user
+                  </p>
+                </div>
+              </div>
+              <Button variant="ghost" size="sm">
+                {isExpanded ? (
+                  <ChevronUp className="h-4 w-4" />
+                ) : (
+                  <ChevronDown className="h-4 w-4" />
                 )}
-            </Card>
-          );
+              </Button>
+            </div>
+            {isExpanded && (
+              <div className="border-t border-yellow-200">
+                <CardContent className="pt-6">
+                  <TasksTable tasks={unknownUserTasks} users={users} />
+                </CardContent>
+              </div>
+            )}
+          </Card>
+        );
       })}
     </div>
   );
