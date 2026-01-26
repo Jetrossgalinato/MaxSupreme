@@ -17,7 +17,12 @@ export async function getUsers() {
       return { success: false, error: error.message };
     }
 
-    return { success: true, users };
+    // Filter out users with the 'admin' role
+    const filteredUsers = users.filter(
+      (user) => user.user_metadata?.role !== "admin",
+    );
+
+    return { success: true, users: filteredUsers };
   } catch (error) {
     console.error("Failed to get users:", error);
     return { success: false, error: "Failed to fetch users" };
