@@ -64,13 +64,13 @@ const Alert: React.FC<AlertProps> = ({
   const getIcon = () => {
     switch (type) {
       case "success":
-        return <CheckCircle className="w-6 h-6 text-green-600" />;
+        return <CheckCircle className="w-5 h-5 text-green-600" />;
       case "error":
-        return <XCircle className="w-6 h-6 text-red-600" />;
+        return <XCircle className="w-5 h-5 text-red-600" />;
       case "warning":
-        return <AlertCircle className="w-6 h-6 text-orange-600" />;
+        return <AlertCircle className="w-5 h-5 text-orange-600" />;
       case "info":
-        return <Info className="w-6 h-6 text-blue-600" />;
+        return <Info className="w-5 h-5 text-blue-600" />;
     }
   };
 
@@ -126,7 +126,7 @@ const Alert: React.FC<AlertProps> = ({
 
   return createPortal(
     <div
-      className={`fixed top-4 right-4 z-[99999] max-w-md w-full sm:w-96 transition-all duration-300 ease-out ${
+      className={`fixed top-8 right-4 z-[99999] max-w-md w-full sm:w-96 transition-all duration-300 ease-out ${
         isExiting
           ? "translate-x-[120%] opacity-0"
           : "translate-x-0 opacity-100 animate-in slide-in-from-right-full"
@@ -135,23 +135,23 @@ const Alert: React.FC<AlertProps> = ({
       <div
         className={`${colors.bg} ${colors.border} border-2 rounded-lg shadow-xl overflow-hidden`}
       >
-        <div className="p-4">
-          <div className="flex items-start gap-4">
+        <div className="p-3">
+          <div className="flex items-start gap-3">
             <div className="flex-shrink-0">{getIcon()}</div>
             <div className="flex-1">
               {title && (
-                <h3 className={`text-lg font-semibold mb-2 ${colors.title}`}>
+                <h3 className={`text-sm font-semibold mb-1 ${colors.title}`}>
                   {title}
                 </h3>
               )}
-              <p className={`text-sm ${colors.text}`}>{message}</p>
+              <p className={`text-xs ${colors.text}`}>{message}</p>
             </div>
             <button
               onClick={handleClose}
               className={`flex-shrink-0 ${colors.text} hover:opacity-70 transition-opacity`}
               aria-label="Close alert"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>
