@@ -18,6 +18,7 @@ import { DeleteConfirmationModal } from "../../components/delete-confirmation-mo
 interface UserTableProps {
   users: User[];
   workLogs: {
+    id: string;
     user_id: string;
     hours_worked: number | string;
     work_date: string;
@@ -26,6 +27,7 @@ interface UserTableProps {
 
 export function UserTable({ users, workLogs }: UserTableProps) {
   const router = useRouter();
+  const [logs, setLogs] = useState(workLogs);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [deletingUser, setDeletingUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -41,6 +43,41 @@ export function UserTable({ users, workLogs }: UserTableProps) {
 
   const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
   const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const supabase = createClient();
+    const channel = supabase
+      .channel("realtime-work-logs")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "work_logs",
+        },
+        (payload) => {
+          if (payload.eventType === "INSERT") {
+            setLogs((prev) => [
+              ...prev,
+              payload.new as (typeof workLogs)[number],
+            ]);
+          } else if (payload.eventType === "UPDATE") {
+            setLogs((prev) =>
+              prev.map((log) =>
+                log.id === payload.new.id
+                  ? (payload.new as (typeof workLogs)[number])
+                  : log,
+              ),
+            );
+          }
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -79,8 +116,8 @@ export function UserTable({ users, workLogs }: UserTableProps) {
   const getDisplayHours = (user: User) => {
     let total = 0;
 
-    // Filter work logs for this user
-    const userLogs = workLogs.filter((log) => log.user_id === user.id);
+    // Filter work logs for this user using the realtime logs state
+    const userLogs = logs.filter((log) => log.user_id === user.id);
 
     // Calculate base hours based on filter
     const now = new Date();

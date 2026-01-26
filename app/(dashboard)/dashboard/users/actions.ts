@@ -89,6 +89,7 @@ export async function updateUser(
     revalidatePath("/dashboard/users");
     return { success: true, user };
   } catch (error) {
+    console.error("Error updating user:", error);
     return { success: false, error: "Failed to update user" };
   }
 }
@@ -105,6 +106,7 @@ export async function deleteUser(userId: string) {
     revalidatePath("/dashboard/users");
     return { success: true };
   } catch (error) {
+    console.error("Error deleting user:", error);
     return { success: false, error: "Failed to delete user" };
   }
 }
