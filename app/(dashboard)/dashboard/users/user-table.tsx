@@ -17,9 +17,14 @@ import { DeleteConfirmationModal } from "../../components/delete-confirmation-mo
 
 interface UserTableProps {
   users: User[];
+  workLogs: {
+    user_id: string;
+    hours_worked: number | string;
+    work_date: string;
+  }[];
 }
 
-export function UserTable({ users }: UserTableProps) {
+export function UserTable({ users, workLogs }: UserTableProps) {
   const router = useRouter();
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [deletingUser, setDeletingUser] = useState<User | null>(null);
@@ -73,48 +78,46 @@ export function UserTable({ users }: UserTableProps) {
 
   const getDisplayHours = (user: User) => {
     let total = 0;
-    const workLog = (user.user_metadata?.work_log || {}) as Record<
-      string,
-      number
-    >;
+
+    // Filter work logs for this user
+    const userLogs = workLogs.filter((log) => log.user_id === user.id);
 
     // Calculate base hours based on filter
-    if (timeFilter === "all") {
-      total = parseFloat(user.user_metadata?.total_hours || "0");
-    } else {
-      const now = new Date();
-      // Use UTC to match the server-side logging which uses UTC dates
-      const currentUTCYear = now.getUTCFullYear();
-      const currentUTCMonth = now.getUTCMonth();
+    const now = new Date();
+    // Use UTC to match the server-side logging which uses UTC dates
+    const currentUTCYear = now.getUTCFullYear();
+    const currentUTCMonth = now.getUTCMonth();
 
-      // Calculate start of week (Sunday) in UTC
-      const dayOfWeek = now.getUTCDay();
-      const startOfWeek = new Date(now);
-      startOfWeek.setUTCDate(now.getUTCDate() - dayOfWeek);
-      startOfWeek.setUTCHours(0, 0, 0, 0);
+    // Calculate start of week (Sunday) in UTC
+    const dayOfWeek = now.getUTCDay();
+    const startOfWeek = new Date(now);
+    startOfWeek.setUTCDate(now.getUTCDate() - dayOfWeek);
+    startOfWeek.setUTCHours(0, 0, 0, 0);
 
-      Object.entries(workLog).forEach(([dateStr, hours]) => {
-        // dateStr is in YYYY-MM-DD format
-        const [y, m, d] = dateStr.split("-").map(Number);
-        const entryDate = new Date(Date.UTC(y, m - 1, d));
+    userLogs.forEach((log) => {
+      const hours = Number(log.hours_worked) || 0;
+      const dateStr = log.work_date; // YYYY-MM-DD
+      const [y, m, d] = dateStr.split("-").map(Number);
+      const entryDate = new Date(Date.UTC(y, m - 1, d));
 
-        if (timeFilter === "today") {
-          const todayStr = now.toISOString().split("T")[0];
-          if (dateStr === todayStr) {
-            total += hours;
-          }
-        } else if (timeFilter === "week") {
-          // Include if entry is on or after start of current week
-          if (entryDate >= startOfWeek) {
-            total += hours;
-          }
-        } else if (timeFilter === "month") {
-          if (y === currentUTCYear && m - 1 === currentUTCMonth) {
-            total += hours;
-          }
+      if (timeFilter === "all") {
+        total += hours;
+      } else if (timeFilter === "today") {
+        const todayStr = now.toISOString().split("T")[0];
+        if (dateStr === todayStr) {
+          total += hours;
         }
-      });
-    }
+      } else if (timeFilter === "week") {
+        // Include if entry is on or after start of current week
+        if (entryDate >= startOfWeek) {
+          total += hours;
+        }
+      } else if (timeFilter === "month") {
+        if (y === currentUTCYear && m - 1 === currentUTCMonth) {
+          total += hours;
+        }
+      }
+    });
 
     // If user is online, add the time since their last activity or login
     if (onlineUsers.has(user.id)) {

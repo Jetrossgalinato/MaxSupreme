@@ -29,6 +29,23 @@ export async function getUsers() {
   }
 }
 
+export async function getWorkLogs() {
+  try {
+    const supabase = createAdminClient();
+    const { data: logs, error } = await supabase.from("work_logs").select("*");
+
+    if (error) {
+      console.error("Error fetching work logs:", error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, logs };
+  } catch (error) {
+    console.error("Failed to get work logs:", error);
+    return { success: false, error: "Failed to fetch work logs" };
+  }
+}
+
 export async function updateUser(
   userId: string,
   data: {
