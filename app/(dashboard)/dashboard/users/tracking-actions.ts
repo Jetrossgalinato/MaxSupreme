@@ -1,9 +1,11 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { createAdminClient } from "@/utils/supabase/admin";
 
 export async function updateUserActivity() {
   const supabase = await createClient();
+  const supabaseAdmin = createAdminClient();
 
   const {
     data: { user },
@@ -55,6 +57,11 @@ export async function updateUserActivity() {
       hoursToAdd = diffMs / (1000 * 60 * 60);
     }
 
+    // If no meaningful time passed, just exit without error to avoid unnecessary updates
+    if (hoursToAdd <= 0) {
+      return { success: true };
+    }
+
     const currentTotal = parseFloat(metadata.total_hours || "0");
     const newTotal = currentTotal + hoursToAdd;
 
@@ -81,8 +88,9 @@ export async function updateUserActivity() {
 
     // 2. Update work_logs table
     if (hoursToAdd > 0) {
+      // Use admin client to bypass RLS issues for background tracking
       // Check for existing record
-      const { data: existingLog, error: fetchError } = await supabase
+      const { data: existingLog, error: fetchError } = await supabaseAdmin
         .from("work_logs")
         .select("*")
         .eq("user_id", user.id)
@@ -96,20 +104,27 @@ export async function updateUserActivity() {
 
       if (existingLog) {
         // Update
-        await supabase
+        const { error: updateError } = await supabaseAdmin
           .from("work_logs")
           .update({
             hours_worked: (Number(existingLog.hours_worked) || 0) + hoursToAdd,
             updated_at: new Date().toISOString(),
           })
           .eq("id", existingLog.id);
+
+        if (updateError) console.error("Error updating work log:", updateError);
       } else {
         // Insert
-        await supabase.from("work_logs").insert({
-          user_id: user.id,
-          work_date: today,
-          hours_worked: hoursToAdd,
-        });
+        const { error: insertError } = await supabaseAdmin
+          .from("work_logs")
+          .insert({
+            user_id: user.id,
+            work_date: today,
+            hours_worked: hoursToAdd,
+          });
+
+        if (insertError)
+          console.error("Error inserting work log:", insertError);
       }
     }
 

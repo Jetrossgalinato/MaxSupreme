@@ -175,7 +175,9 @@ export function UserTable({ users, workLogs }: UserTableProps) {
       // If we have a valid anchor, calculate the live diff
       if (anchorTime > 0) {
         const diffMs = currentTime.getTime() - anchorTime;
-        if (diffMs > 0) {
+        // Only show live time if it's significant (e.g. > 1 sec) and reasonably recent (< 5 mins)
+        // to match the backend logic and avoid double counting issues briefly after data sync
+        if (diffMs > 1000 && diffMs < 5 * 60 * 1000) {
           const currentSessionHours = diffMs / (1000 * 60 * 60);
 
           // Live session counts for all time filters as it is happening "now"
