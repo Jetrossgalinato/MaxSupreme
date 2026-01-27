@@ -2,6 +2,7 @@ import { getAllTasks } from "./actions";
 import { getUsers } from "../users/actions";
 import { EmployeeTasksView } from "./employee-tasks-view";
 import { CreateTaskButton } from "./create-task-button";
+import { ExportTasksButton } from "./export-tasks-button";
 
 export default async function TasksPage() {
   const { data: tasks } = await getAllTasks();
@@ -16,7 +17,10 @@ export default async function TasksPage() {
             Manage and assign tasks by employee.
           </p>
         </div>
-        <CreateTaskButton users={users || []} />
+        <div className="flex items-center gap-2">
+          <ExportTasksButton tasks={tasks || []} users={users || []} />
+          <CreateTaskButton users={users || []} />
+        </div>
       </div>
 
       <EmployeeTasksView tasks={tasks || []} users={users || []} />
