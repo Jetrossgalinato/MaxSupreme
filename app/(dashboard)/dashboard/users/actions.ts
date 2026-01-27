@@ -17,10 +17,32 @@ export async function getUsers() {
       return { success: false, error: error.message };
     }
 
-    return { success: true, users };
+    // Filter out users with the 'admin' role
+    const filteredUsers = users.filter(
+      (user) => user.user_metadata?.role !== "admin",
+    );
+
+    return { success: true, users: filteredUsers };
   } catch (error) {
     console.error("Failed to get users:", error);
     return { success: false, error: "Failed to fetch users" };
+  }
+}
+
+export async function getWorkLogs() {
+  try {
+    const supabase = createAdminClient();
+    const { data: logs, error } = await supabase.from("work_logs").select("*");
+
+    if (error) {
+      console.error("Error fetching work logs:", error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, logs };
+  } catch (error) {
+    console.error("Failed to get work logs:", error);
+    return { success: false, error: "Failed to fetch work logs" };
   }
 }
 
@@ -67,6 +89,7 @@ export async function updateUser(
     revalidatePath("/dashboard/users");
     return { success: true, user };
   } catch (error) {
+    console.error("Error updating user:", error);
     return { success: false, error: "Failed to update user" };
   }
 }
@@ -83,6 +106,7 @@ export async function deleteUser(userId: string) {
     revalidatePath("/dashboard/users");
     return { success: true };
   } catch (error) {
+    console.error("Error deleting user:", error);
     return { success: false, error: "Failed to delete user" };
   }
 }

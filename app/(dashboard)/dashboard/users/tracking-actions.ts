@@ -1,9 +1,11 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { createAdminClient } from "@/utils/supabase/admin";
 
 export async function updateUserActivity() {
   const supabase = await createClient();
+  const supabaseAdmin = createAdminClient();
 
   const {
     data: { user },
@@ -55,6 +57,11 @@ export async function updateUserActivity() {
       hoursToAdd = diffMs / (1000 * 60 * 60);
     }
 
+    // If no meaningful time passed, just exit without error to avoid unnecessary updates
+    if (hoursToAdd <= 0) {
+      return { success: true };
+    }
+
     const currentTotal = parseFloat(metadata.total_hours || "0");
     const newTotal = currentTotal + hoursToAdd;
 
@@ -65,6 +72,7 @@ export async function updateUserActivity() {
       typeof workLog[today] === "number" ? workLog[today] : 0;
     workLog[today] = currentToday + hoursToAdd;
 
+    // 1. Update Metadata (Legacy/Backup)
     const { error: updateError } = await supabase.auth.updateUser({
       data: {
         total_hours: newTotal,
@@ -76,6 +84,48 @@ export async function updateUserActivity() {
     if (updateError) {
       console.error("Failed to update user activity:", updateError);
       return { success: false, error: updateError.message };
+    }
+
+    // 2. Update work_logs table
+    if (hoursToAdd > 0) {
+      // Use admin client to bypass RLS issues for background tracking
+      // Check for existing record
+      const { data: existingLog, error: fetchError } = await supabaseAdmin
+        .from("work_logs")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("work_date", today)
+        .single();
+
+      if (fetchError && fetchError.code !== "PGRST116") {
+        // PGRST116 is "no rows returned"
+        console.error("Error fetching work log:", fetchError);
+      }
+
+      if (existingLog) {
+        // Update
+        const { error: updateError } = await supabaseAdmin
+          .from("work_logs")
+          .update({
+            hours_worked: (Number(existingLog.hours_worked) || 0) + hoursToAdd,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", existingLog.id);
+
+        if (updateError) console.error("Error updating work log:", updateError);
+      } else {
+        // Insert
+        const { error: insertError } = await supabaseAdmin
+          .from("work_logs")
+          .insert({
+            user_id: user.id,
+            work_date: today,
+            hours_worked: hoursToAdd,
+          });
+
+        if (insertError)
+          console.error("Error inserting work log:", insertError);
+      }
     }
 
     return { success: true };

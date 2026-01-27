@@ -1,13 +1,16 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { UserTable } from "./user-table";
-import { getUsers } from "./actions";
+import { getUsers, getWorkLogs } from "./actions";
 import { AlertCircle } from "lucide-react";
 import { TypographyH2, TypographyMuted } from "@/components/ui/typography";
 
 export const dynamic = "force-dynamic";
 
 export default async function UsersPage() {
-  const { users, error } = await getUsers();
+  const [{ users, error }, { logs: workLogs }] = await Promise.all([
+    getUsers(),
+    getWorkLogs(),
+  ]);
 
   return (
     <div className="p-4 space-y-8">
@@ -38,7 +41,7 @@ export default async function UsersPage() {
               </p>
             </div>
           ) : (
-            <UserTable users={users || []} />
+            <UserTable users={users || []} workLogs={workLogs || []} />
           )}
         </CardContent>
       </Card>
