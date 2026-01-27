@@ -18,7 +18,7 @@ export default async function TasksPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <ExportTasksButton tasks={tasks || []} />
+          <ExportTasksButton tasks={tasks || []} users={users || []} />
           <CreateTaskButton users={users || []} />
         </div>
       </div>

@@ -10,15 +10,26 @@ import {
 import { Download } from "lucide-react";
 import { Task } from "@/types/tasks";
 import * as XLSX from "xlsx";
+import { User } from "@supabase/supabase-js";
 
 interface ExportTasksButtonProps {
   tasks: Task[];
+  users: User[];
 }
 
-export function ExportTasksButton({ tasks }: ExportTasksButtonProps) {
+export function ExportTasksButton({ tasks, users }: ExportTasksButtonProps) {
+  const getUserName = (userId: string | null) => {
+    if (!userId) return "";
+    const user = users.find((u) => u.id === userId);
+    if (!user) return userId;
+    const { first_name, last_name } = user.user_metadata || {};
+    return first_name && last_name
+      ? `${first_name} ${last_name}`
+      : user.email || userId;
+  };
+
   const prepareData = () => {
     return tasks.map((task) => ({
-      ID: task.id,
       Title: task.title,
       Priority: task.priority,
       Status: task.status,
@@ -26,14 +37,13 @@ export function ExportTasksButton({ tasks }: ExportTasksButtonProps) {
       "End Date": task.end_date || "",
       Milestone: task.milestone || "",
       Notes: task.notes || "",
-      "Assigned To": task.assigned_to || "",
+      "Assigned To": getUserName(task.assigned_to),
       "Created At": task.created_at,
     }));
   };
 
   const handleExportCSV = () => {
     const headers = [
-      "ID",
       "Title",
       "Priority",
       "Status",
@@ -49,7 +59,6 @@ export function ExportTasksButton({ tasks }: ExportTasksButtonProps) {
       headers.join(","),
       ...tasks.map((task) =>
         [
-          task.id,
           `"${task.title?.replace(/"/g, '""') || ""}"`,
           task.priority,
           task.status,
@@ -57,7 +66,7 @@ export function ExportTasksButton({ tasks }: ExportTasksButtonProps) {
           task.end_date || "",
           `"${task.milestone?.replace(/"/g, '""') || ""}"`,
           `"${task.notes?.replace(/"/g, '""') || ""}"`,
-          task.assigned_to || "",
+          `"${getUserName(task.assigned_to).replace(/"/g, '""')}"`,
           task.created_at,
         ].join(","),
       ),
